@@ -31,6 +31,7 @@ The detection of Plasmodium vivax malaria remains challenging, primarily due to 
 - The dataset consists of image folder, training json file & test json file
 - There are 1,328 microscopic images of blood smears.
 - Image resolution:1600x1200
+- Infected red blood cells contain Plasmodium vivax parasites.
 - Class label & set of bounding box coordinates given for each image.
 - 7 Class labels: red blood cell (uninfected), trophozoite, gametocyte, schizont, difficult, ring & leukocyte (uninfected)
 - The Red Blood Cell and Leukocyte classes are blood cells that are not infected with the malaria parasite.
