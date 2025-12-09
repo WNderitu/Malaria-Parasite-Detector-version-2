@@ -162,7 +162,7 @@ chart_mode = st.sidebar.radio(
     key='chart_mode_radio'  # unique key to prevent duplicates
 )
 
-if uploaded_files and net and class_names:
+if uploaded_files and session and class_names:
     st.subheader(f"Processing {len(uploaded_files)} Images...")
     if st.button("  ▶️  Run detection"):
         progress_bar = st.progress(0)
