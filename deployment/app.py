@@ -197,4 +197,4 @@ if uploaded_files and session and class_names:
                 # Class Count Overview
                 st.markdown("##### 🧫 Class Counts per Image")
                 cols = st.columns(3) 
-                all_classes = ['red blood cell', 'leukocyte', 'schizont', 'ring
+                all_classes = ['red blood cell', 'leukocyte', 'schizont', 'ring', 'gametocyte', 'trophozoite']
