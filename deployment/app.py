@@ -58,7 +58,7 @@ st.title("🔬 Malaria Parasite (P.vivax) Detection using YOLOV8n")
 st.sidebar.header("⚙️ Model & Visualization Settings")
 
 confidence_threshold = st.sidebar.slider("Confidence Threshold", 0.0, 1.0, 0.5, 0.05)
-nms_threshold = st.sidebar.slider("NMS Threshold", 0.0, 1.0, 0.35, 0.05)
+nms_threshold = st.sidebar.slider("NMS Threshold", 0.0, 1.0, 0.45, 0.05)
 show_boxes = st.sidebar.checkbox("Show Bounding Boxes", value=True)
 show_labels = st.sidebar.checkbox("Show Class Labels", value=True)
 show_only_parasites = st.sidebar.checkbox("Show Only Parasite Detections", value=False)
