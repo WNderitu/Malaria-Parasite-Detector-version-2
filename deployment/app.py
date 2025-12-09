@@ -78,8 +78,7 @@ def process_image(session, image, conf_threshold, nms_threshold, class_names,
     
     # Run inference
     outputs = session.run(None, {"images": img})
-    preds = outputs[0]  # shape (1, 33600, 10)
-    preds = preds[0]    # remove batch dim
+    preds = outputs[0][0]   # shape (33600, 10)
     
     boxes, confidences, class_ids = [], [], []
     class_counts = {name: 0 for name in class_names}
@@ -101,30 +100,30 @@ def process_image(session, image, conf_threshold, nms_threshold, class_names,
     COLOR_MAP = DEFAULT_COLOR_MAP if color_scheme=="Default" else HIGH_CONTRAST_MAP if color_scheme=="High Contrast" else PASTEL_MAP
     
     # Decode predictions
-for det in preds:
-    x, y, w, h, obj_conf, *cls_scores = det
-    class_id = np.argmax(cls_scores)
-    class_conf = cls_scores[class_id]
-    conf = obj_conf * class_conf   # final confidence
+    for det in preds:
+        x, y, w, h, obj_conf, *cls_scores = det
+        class_id = np.argmax(cls_scores)
+        class_conf = cls_scores[class_id]
+        conf = obj_conf * class_conf   # final confidence
 
-    if conf < conf_threshold:
-        continue
-    if class_id >= len(class_names):
-        continue
+        if conf < conf_threshold:
+            continue
+        if class_id >= len(class_names):
+            continue
 
-    # Scale back to original image size
-    x_scale = img_cv_rgb.shape[1] / INPUT_WIDTH
-    y_scale = img_cv_rgb.shape[0] / INPUT_HEIGHT
-    cx, cy = x * x_scale, y * y_scale
-    bw, bh = w * x_scale, h * y_scale
-    x1, y1 = int(cx - bw/2), int(cy - bh/2)
+        # Scale back to original image size
+        x_scale = img_cv_rgb.shape[1] / INPUT_WIDTH
+        y_scale = img_cv_rgb.shape[0] / INPUT_HEIGHT
+        cx, cy = x * x_scale, y * y_scale
+        bw, bh = w * x_scale, h * y_scale
+        x1, y1 = int(cx - bw/2), int(cy - bh/2)
 
-    boxes.append([x1, y1, int(bw), int(bh)])
-    confidences.append(float(conf))
-    class_ids.append(class_id)
+        boxes.append([x1, y1, int(bw), int(bh)])
+        confidences.append(float(conf))
+        class_ids.append(class_id)
     
     if not boxes:
-return img_cv_rgb, class_counts
+        return img_cv_rgb, class_counts
     
     indices = cv2.dnn.NMSBoxes(boxes, confidences, conf_threshold, nms_threshold)
     if len(indices) > 0:
@@ -153,7 +152,7 @@ return img_cv_rgb, class_counts
                         0.6, (255,255,255), 1, cv2.LINE_AA)
     
     return img_cv_rgb, class_counts
-                      
+
 # --- User Interface ---
 st.header(" 🩸 Upload image of blood smear slide")
 uploaded_files = st.file_uploader("Choose one or more image files", type=['jpg','jpeg','png','bmp'], accept_multiple_files=True)
@@ -163,7 +162,7 @@ chart_mode = st.sidebar.radio(
     'Chart Mode',
     ['Counts', 'Percentages'],
     index=0,
-    key='chart_mode_radio'  # unique key to prevent duplicates
+    key='chart_mode_radio'
 )
 
 if uploaded_files and session and class_names:
@@ -171,7 +170,7 @@ if uploaded_files and session and class_names:
     if st.button("  ▶️  Run detection"):
         progress_bar = st.progress(0)
         total_images = len(uploaded_files)
-        results_summary = []  # Collect results for CSV export
+        results_summary = []
 
         for i, file in enumerate(uploaded_files):
             image = Image.open(file)
@@ -198,91 +197,6 @@ if uploaded_files and session and class_names:
                 st.metric(
                     label='**Estimated Parasitemia Rate**',
                     value=parasitemia_display,
-                    help=("Calculated as: (Total Parasite Detections / Total Cell Detections) * 100. It estimates the proportion of infected cells among all detected cells.")
-                    )
-                st.info(f"**Total Objects Counted:** {total_detections}")
-
-                # Class Count Overview
-                st.markdown("##### 🧫 Class Counts per Image")
-                cols = st.columns(3) 
-                all_classes = ['red blood cell', 'leukocyte', 'schizont', 'ring', 'gametocyte', 'trophozoite']
-
-                # Iterate through the defined classes for consistent order
-                for idx, class_name in enumerate(all_classes):
-                    count = class_counts.get(class_name, 0)
-    
-                    # Use the modulo operator (%) to distribute items into the 3 columns
-                    with cols[idx % 3]:
-                        # Use st.caption and st.code for a very compact, non-metric look
-                        # st.caption gives the title, and st.markdown gives the bold count
-                        st.caption(class_name.title())
-                        st.markdown(f"**{count}**")
-
-                # st.markdown("---") 
-                        
-                # Bar Chart
-                counts_df = pd.DataFrame(list(class_counts.items()), columns=["Class", "Count"])
-                if not counts_df.empty:
-                    # Calculate percentages
-                    total = counts_df["Count"].sum()
-                    counts_df["Percentage"] = (counts_df["Count"] / total) * 100 if total > 0 else 0
-                                                          
-                    # Choose which column to plot based on mode
-                    if chart_mode == 'Counts':
-                        x_field = "Count"
-                        x_title = "Number of Detections"
-                        chart_title = "Detection Counts per Class"
-                    else:
-                        x_field = "Percentage"
-                        x_title = "Detections (%)"
-                        chart_title = "Detection % per Class"
-                    
-                    # Build chart
-                    chart = (
-                        alt.Chart(counts_df)
-                        .mark_bar()
-                        .encode(
-                            x=alt.X(f"{x_field}:Q", title=x_title),
-                            y=alt.Y("Class:N", sort='-x', title="Class Name"),
-                            color=alt.Color("class:N",legend=None),
-                            tooltip=[
-                                alt.Tooltip('Class:N',title="Class"),
-                                alt.Tooltip("Count:Q", title="Count"),
-                                alt.Tooltip("Percentage:Q", title="Percentage", format=".2f")
-                            ]
-                        )
-                        .properties(width="container",height=300,title=chart_title)
-                    )
-                    st.altair_chart(chart, use_container_width=True)
-                else:
-                    st.warning("No detections found to visualize.")
-                    
-                # Append results for CSV
-                results_summary.append({
-                    "Image": file.name,
-                    "Total Parasites": total_parasite_count,
-                    "Total Detections": total_detections,
-                    "Parasitemia (%)": f"{parasitemia:.2f}",
-                    **{f"Count_{cls}": count for cls, count in class_counts.items()}
-                })
-
-            st.divider()
-            progress_bar.progress((i+1)/total_images)
-
-        progress_bar.empty()
-        st.success(" ✅ Detection and quantification complete!")
-
-        # --- CSV Export ---
-        if results_summary:
-            df_results = pd.DataFrame(results_summary)
-            csv_buffer = io.StringIO()
-            df_results.to_csv(csv_buffer, index=False)
-            st.sidebar.download_button(
-                label="📥 Download Results as CSV",
-                data=csv_buffer.getvalue(),
-                file_name="malaria_detection_results.csv",
-                mime="text/csv",
-                help="Export per-image counts and parasitemia rates."
-            )
-elif not session:
-    st.error(" ❌ ONNX model could not be loaded. Please check the path and file integrity.")
+                    help=("Calculated as: (Total Parasite Detections / Total Cell Detections) * 100.")
+                )
+                st.info(f"**Total Objects Counted:** {total_d
