@@ -10,14 +10,26 @@ import io
 # ====================================================================
 
 # 1. Path to your ONNX model weights
-# CRITICAL: This path must point to your exported .onnx file on GitHub.
-MODEL_DIR = 'yolov8_weights' 
-MODEL_FILE = 'best.onnx' # <<< Changed to ONNX extension
-MODEL_PATH = os.path.join(MODEL_DIR, MODEL_FILE)
+# --- File Paths ---
+base_path = os.path.dirname(__file__)
+model_path = os.path.join(base_path, 'best.onnx')
+classes_path = os.path.join(base_path, 'classes.txt')
+
+# --- Validate Files ---
+# Check if files exist
+if not os.path.exists(model_path):
+    st.error(f"ONNX model not found at: {model_path}")
+else:
+    st.success("✅ ONNX model loaded successfully.")
+
+if not os.path.exists(classes_path):
+    st.error(f"Class names file not found at: {classes_path}")
+else:
+    st.success(" ✅ Class names file loaded successfully.")
 
 # 2. Optimal Thresholds determined from your iterative search
-OPTIMAL_CONFIDENCE = 0.25 
-OPTIMAL_IOU = 0.50          
+OPTIMAL_CONFIDENCE = 0.001
+OPTIMAL_IOU = 0.4        
 IMAGE_SIZE = 1280           
 
 # 3. Class names (must match your data.yaml)
