@@ -122,7 +122,6 @@ for det in preds:
     boxes.append([x1, y1, int(bw), int(bh)])
     confidences.append(float(conf))
     class_ids.append(class_id)
-
     
     if not boxes:
         return img_cv_rgb, class_counts
