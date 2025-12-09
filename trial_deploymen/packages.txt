@@ -15,3 +15,4 @@ libpango-1.0-0
 ffmpeg
 ca-certificates
 wget
+libgl1-mesa-glx
