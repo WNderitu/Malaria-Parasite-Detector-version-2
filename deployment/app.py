@@ -80,13 +80,13 @@ def process_image(net, image, conf_threshold, nms_threshold, class_names,
 
     # Color maps
     DEFAULT_COLOR_MAP = {
-        'red blood cell': (0, 0, 255),
-        'leukocyte': (255, 255, 255),
-        'schizont': (0, 255, 255),
-        'ring': (0, 255, 0),
-        'gametocyte': (255, 0, 255),
-        'trophozoite': (255, 0, 0),
-        'default': (128, 128, 128)
+        'red blood cell': (0, 0, 255),    # RED
+        'leukocyte': (255, 255, 255),     # WHITE
+        'schizont': (0, 255, 255),        # YELLOW
+        'ring': (0, 255, 0),              # GREEN
+        'gametocyte': (255, 0, 255),      # MAGENTA
+        'trophozoite': (255, 0, 0),       # BLUE
+        'default': (128, 128, 128)        # GRAY
     }
     HIGH_CONTRAST_MAP = {k: (255, 255, 0) for k in DEFAULT_COLOR_MAP}
     PASTEL_MAP = {k: (200, 180, 255) for k in DEFAULT_COLOR_MAP}
