@@ -172,7 +172,7 @@ if uploaded_files and session and class_names:
         for i, file in enumerate(uploaded_files):
             image = Image.open(file)
             detected_img_cv, class_counts = process_image(
-                net, image, confidence_threshold, nms_threshold, class_names,
+                session, image, confidence_threshold, nms_threshold, class_names,
                 show_boxes, show_labels, show_only_parasites, color_scheme
             )
             detected_img_rgb = cv2.cvtColor(detected_img_cv, cv2.COLOR_BGR2RGB)
