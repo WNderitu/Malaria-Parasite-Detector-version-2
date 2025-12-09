@@ -198,3 +198,82 @@ if uploaded_files and session and class_names:
                 st.markdown("##### 🧫 Class Counts per Image")
                 cols = st.columns(3) 
                 all_classes = ['red blood cell', 'leukocyte', 'schizont', 'ring', 'gametocyte', 'trophozoite']
+                
+                # Iterate through the defined classes for consistent order
+                for idx, class_name in enumerate(all_classes):
+                    count = class_counts.get(class_name, 0)
+    
+                    # Use the modulo operator (%) to distribute items into the 3 columns
+                    with cols[idx % 3]:
+                        # Use st.caption and st.code for a very compact, non-metric look
+                        # st.caption gives the title, and st.markdown gives the bold count
+                        st.caption(class_name.title())
+                        st.markdown(f"**{count}**")
+
+                # st.markdown("---") 
+                # Bar Chart
+                counts_df = pd.DataFrame(list(class_counts.items()), columns=["Class", "Count"])
+                if not counts_df.empty:
+                    # Calculate percentages
+                    total = counts_df["Count"].sum()
+                    counts_df["Percentage"] = (counts_df["Count"] / total) * 100 if total > 0 else 0
+                                                          
+                    # Choose which column to plot based on mode
+                    if chart_mode == 'Counts':
+                        x_field = "Count"
+                        x_title = "Number of Detections"
+                        chart_title = "Detection Counts per Class"
+                    else:
+                        x_field = "Percentage"
+                        x_title = "Detections (%)"
+                        chart_title = "Detection % per Class"
+
+                    # Build chart
+                    chart = (
+                        alt.Chart(counts_df)
+                        .mark_bar()
+                        .encode(
+                            x=alt.X(f"{x_field}:Q", title=x_title),
+                            y=alt.Y("Class:N", sort='-x', title="Class Name"),
+                            color=alt.Color("class:N",legend=None),
+                            tooltip=[
+                                alt.Tooltip('Class:N',title="Class"),
+                                alt.Tooltip("Count:Q", title="Count"),
+                                alt.Tooltip("Percentage:Q", title="Percentage", format=".2f")
+                            ]
+                        )
+                        .properties(width="container",height=300,title=chart_title)
+                    )
+                    st.altair_chart(chart, use_container_width=True)
+                else:
+                    st.warning("No detections found to visualize.")
+                    
+                # Append results for CSV
+                results_summary.append({
+                    "Image": file.name,
+                    "Total Parasites": total_parasite_count,
+                    "Total Detections": total_detections,
+                    "Parasitemia (%)": f"{parasitemia:.2f}",
+                    **{f"Count_{cls}": count for cls, count in class_counts.items()}
+                })
+
+            st.divider()
+            progress_bar.progress((i+1)/total_images)
+
+        progress_bar.empty()
+        st.success(" ✅ Detection and quantification complete!")
+
+        # --- CSV Export ---
+        if results_summary:
+            df_results = pd.DataFrame(results_summary)
+            csv_buffer = io.StringIO()
+            df_results.to_csv(csv_buffer, index=False)
+            st.sidebar.download_button(
+                label="📥 Download Results as CSV",
+                data=csv_buffer.getvalue(),
+                file_name="malaria_detection_results.csv",
+                mime="text/csv",
+                help="Export per-image counts and parasitemia rates."
+            )
+elif not session:
+    st.error(" ❌ ONNX model could not be loaded. Please check the path and file integrity.")
