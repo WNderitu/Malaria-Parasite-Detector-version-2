@@ -76,13 +76,17 @@ with st.expander("⚠️ Model Performance Information", expanded=False):
 # --- Dynamic Sidebar ---
 st.sidebar.header("⚙️ Model & Visualization Settings")
 
-# Detection settings
+# Detection settings - Constrained ranges
 confidence_threshold = st.sidebar.slider(
     "Confidence Threshold", 
-    0.0, 1.0, 0.25, 0.05,
-    help="Lower threshold (0.20-0.30) recommended for rare classes like gametocyte and schizont"
+    0.20, 0.40, 0.25, 0.01,
+    help="Constrained to 0.20-0.40. Lower values detect more rare parasites but may increase false positives"
 )
-nms_threshold = st.sidebar.slider("NMS Threshold", 0.0, 1.0, 0.35, 0.05)
+nms_threshold = st.sidebar.slider(
+    "NMS IoU Threshold", 
+    0.60, 0.70, 0.65, 0.01,
+    help="Constrained to 0.60-0.70. Higher values allow more overlapping detections"
+)
 
 # Visualization settings
 show_boxes = st.sidebar.checkbox("Show Bounding Boxes", value=True)
@@ -98,13 +102,14 @@ use_class_thresholds = st.sidebar.checkbox("Enable Class-Specific Thresholds", v
 
 class_thresholds = {}
 if use_class_thresholds:
+    st.sidebar.info("Per-class thresholds constrained to 0.20-0.40 range")
     class_thresholds = {
-        'schizont': st.sidebar.slider("Schizont Threshold", 0.0, 1.0, 0.15, 0.05),
-        'gametocyte': st.sidebar.slider("Gametocyte Threshold", 0.0, 1.0, 0.15, 0.05),
-        'ring': st.sidebar.slider("Ring Threshold", 0.0, 1.0, 0.20, 0.05),
-        'trophozoite': st.sidebar.slider("Trophozoite Threshold", 0.0, 1.0, 0.25, 0.05),
-        'red blood cell': st.sidebar.slider("RBC Threshold", 0.0, 1.0, 0.50, 0.05),
-        'leukocyte': st.sidebar.slider("Leukocyte Threshold", 0.0, 1.0, 0.40, 0.05),
+        'schizont': st.sidebar.slider("Schizont Threshold", 0.20, 0.40, 0.20, 0.01),
+        'gametocyte': st.sidebar.slider("Gametocyte Threshold", 0.20, 0.40, 0.20, 0.01),
+        'ring': st.sidebar.slider("Ring Threshold", 0.20, 0.40, 0.22, 0.01),
+        'trophozoite': st.sidebar.slider("Trophozoite Threshold", 0.20, 0.40, 0.25, 0.01),
+        'red blood cell': st.sidebar.slider("RBC Threshold", 0.20, 0.40, 0.35, 0.01),
+        'leukocyte': st.sidebar.slider("Leukocyte Threshold", 0.20, 0.40, 0.30, 0.01),
     }
 
 # --- Enhanced Image Processing Function ---
