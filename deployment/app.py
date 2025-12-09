@@ -89,7 +89,7 @@ color_scheme = st.sidebar.selectbox("Color Scheme", ["Default", "High Contrast",
 def process_image(net, image, conf_threshold, nms_threshold, class_names, show_boxes=True, show_labels=True, show_only_parasites=False, color_scheme="Default"):
     
     # RESOLUTION CHANGE: Updated to 1280x1280
-    INPUT_WIDTH, INPUT_HEIGHT = 1280, 1280
+    INPUT_WIDTH, INPUT_HEIGHT = 640, 640
     
     # 1. Convert PIL image to BGR numpy array for OpenCV consistency
     img_cv_rgb = np.array(image.convert("RGB"))
