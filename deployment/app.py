@@ -332,8 +332,8 @@ def process_image(session, image, conf_threshold, class_names,
     DEFAULT_COLOR_MAP = {
         'red blood cell': (0, 0, 255),      # Blue (Appears Red in BGR conversion)
         'leukocyte': (255, 255, 0),         # Cyan (Appears Yellow)
-        'schizont': (0, 255, 255),          # Yellow (Appears Cyan)
-        'ring': (0, 255, 0),                # Green (Appears Green)
+        'schizont': (0, 255, 0),            # Green (Appears Green)
+        'ring': (0, 255, 255),              # Yello/Cyan (Appears Yellow)
         'gametocyte': (255, 0, 255),        # Magenta (Appears Magenta)
         'trophozoite': (255, 165, 0),       # Orange (Appears Orange)
         'default': (128, 128, 128)
