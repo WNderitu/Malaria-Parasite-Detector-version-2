@@ -150,7 +150,7 @@ def create_confidence_histogram(class_confidences):
 def display_color_legend(color_scheme="Default"):
     # (Simplified color map creation for legend)
     COLOR_MAPS = {
-        "Default": {'Red Blood Cell': (0, 0, 255), 'Leukocyte': (255, 255, 0), 'Schizont': (0, 255, 255), 'Ring': (0, 255, 0), 'Gametocyte': (255, 0, 255), 'Trophozoite': (255, 165, 0)},
+        "Default": {'Red Blood Cell': (0, 0, 255), 'Leukocyte': (255, 255, 0), 'Schizont': (0, 255, 0), 'Ring': (0, 255, 255), 'Gametocyte': (255, 0, 255), 'Trophozoite': (255, 165, 0)},
         "High Contrast": {'Red Blood Cell': (255, 0, 0), 'Leukocyte': (255, 255, 0), 'Schizont': (0, 255, 255), 'Ring': (0, 255, 0), 'Gametocyte': (255, 0, 255), 'Trophozoite': (255, 128, 0)},
         "Pastel": {'Red Blood Cell': (255, 182, 193), 'Leukocyte': (255, 250, 205), 'Schizont': (175, 238, 238), 'Ring': (144, 238, 144), 'Gametocyte': (221, 160, 221), 'Trophozoite': (255, 218, 185)},
     }
