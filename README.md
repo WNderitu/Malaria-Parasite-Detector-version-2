@@ -57,11 +57,7 @@ The detection of Plasmodium vivax malaria remains challenging, primarily due to 
 <img width="447" height="319" alt="image" src="https://github.com/user-attachments/assets/dfdab58d-827d-496b-8da6-bcee41ffbd42" />
 
 ## Project Description
-This project employs YOLOv8 for multiclass object detection, leveraging its advanced capabilities to accurately identify and localize multiple object types within images or video frames.
-
-## Project Overview
-
-<img width="909" height="225" alt="image" src="https://github.com/user-attachments/assets/93ad134d-cf7d-479a-a33d-67afb28369d8" />
+This project employs YOLOv8n variant for multiclass object detection, leveraging its advanced capabilities to accurately identify and localize multiple object types within images or video frames.
 
 ## Deep learning Model Architecture
 
