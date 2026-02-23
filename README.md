@@ -1,5 +1,7 @@
 # Plasmodium Vivax (malaria) parasite detector and counter using YOLOv8n Model version 2
 
+This repository is an update on a previous repository https://github.com/WNderitu/Malaria-parasite-P.Vivax-detector-and-counter.git. In this repository, the full set of image dataset is utilised in model training. 
+
 ## Introduction
 
 Malaria, a life-threatening disease caused by Plasmodium parasites transmitted by female Anopheles mosquitoes, is most commonly found in tropical and subtropical regions. In 2023, the African Region was home to 94% and 95% of malaria cases and deaths, respectively. Sub-Saharan Africa carries a disproportionately high share of the global malaria burden. Plasmodium vivax is one of the 5 parasites that cause malaria associated with disease relapses due to dormant liver stages, contributing significantly to morbidity.  
