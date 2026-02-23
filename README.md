@@ -4,20 +4,31 @@ This repository is an update on a previous repository https://github.com/WNderit
 
 ## Introduction
 
-Malaria, a life-threatening disease caused by Plasmodium parasites transmitted by female Anopheles mosquitoes, is most commonly found in tropical and subtropical regions. In 2023, the African Region was home to 94% and 95% of malaria cases and deaths, respectively. Sub-Saharan Africa carries a disproportionately high share of the global malaria burden. Plasmodium vivax is one of the 5 parasites that cause malaria associated with disease relapses due to dormant liver stages, contributing significantly to morbidity.  
+### Malaria
+- A life-threatening disease, caused by Plasmodium parasites transmitted by female Anopheles mosquitoes and is most commonly found in tropical and subtropical regions.
+- Five types of plasmodium parasites cause malaria;
+-   _Plasmodium Vivax_ (focus of this project)
+-   _Plasmodium Falciparum_
+-   _Plasmodium Ovale_
+-   _Plasmodium Malariae_
+-   _Plasmodium Knowelsi_
 
-The Plasmodium vivax lifecycle alternates between humans and Anopheles mosquitoes. Infection begins when a mosquito injects sporozoites into a human, which then move to the liver to either develop or remain dormant. Merozoites released from the liver infect red blood cells, progressing through ring, trophozoite, and schizont stages, causing malaria symptoms. Some parasites develop into gametocytes, enabling further transmission via mosquitoes.
+Malaria parasites undergo different lifecycle stages namely: hypnozoite, merozoite, ring, trophozoite, schizont and gametocyte while in human blood and tissues. Four lifecycle stages can be detected in human red blood cells during a parasites life cycle in man. 
 
-Diagnosis of Plasmodium vivax malaria relies on examining stained blood smears via microsocopy and rapid diagnostic tests, with accurate detection being key to effective treatment and relapse prevention. Advanced methods like deep learning models, such as  Regional Based CNN, YOLOv8, and others would offer improved reliability and efficiency in identifying infections.
+### Malaria Disease Burden in 2024
 
-<img width="755" height="472" alt="image" src="https://github.com/user-attachments/assets/d55d4034-1d38-4192-a656-e65af73a03a8" />
+Globally, there were 282 million new cases(1 out of 16 people developed malaria) and 610,000 deaths (13.8 deaths per 100,000 people at risk).  In africa, There were 265 million new cases (94% of cases globally) which translates to 1 out of 4 people developed malaria (237.6 cases per 1,000 people at risk). In terms of deaths, Africa had 579,000 deaths (95% of deaths globally) which was also quantified as 51.9 deaths per 100,000 people at risk. 75% of all deaths in Africa occured in children less than 5 years of age. This statistics show that
+Africa had a heavy burden of malaria especially in Sub Saharan Africa.(Source: WHO Global Malaria Report, 2025)
 
+### Malaria Diagnosis and Need for Advanced Detection Systems
 
-Plasmodium Vivax Lifecycle
+The gold standard test for the diagnosis of malaria is microscopy. The test involves examining and detecting malaria parasite in a patient’s blood sample. The microscopist identifies the type of parasite, the different lifecycle stages & the parasite quantity/load. In the laboratory, a Giemsa-stained thick blood smear is prepared from the patient's blood sample by a microscopist. This process is normally manual, time consuming and requires a skilled and expert microscopist. In some settings there is a shortage of laboratory personell with the required skills. In addititon, ensuring expert slide preparation and reading can be difficult and in some rural settings, microscopy is often unavailable. 
+
+It is important for there to be accurate and quick detection of parasites in patient's blood smears so as to have prompt treatment and prevention of disease relapse especially in the case of malaria caused by Plasmodium Vivax parasite. Therefore there is a need for advanced detection systems such as artificial intelligent aided systems. This systems may improve improve reliability and efficiency in identifying malaria parasites causing malaria infections.
 
 ## Problem Statement
 
-The detection of Plasmodium vivax malaria remains challenging, primarily due to the morphological similarities between parasite stages and other blood components observed in microscopic images. Conventional microscopy is a labor-intensive process that is susceptible to human error and demands specialized expertise, which may be limited in under-resourced settings. Consequently, there is an urgent need for automated, efficient, and dependable solutions capable of detecting and quantifying Plasmodium vivax parasites and their developmental stages within blood smears. Such advancements would enhance diagnostic accuracy, promote effective treatment, and strengthen malaria control initiatives.
+The detection of Plasmodium vivax malaria remains challenging, primarily due to the morphological similarities between parasite lifecycle stages in infected red blood cells and other blood components observed in microscopic images. Conventional microscopy is a labor-intensive process that is susceptible to human error and demands specialized expertise, which may be limited in under-resourced settings. Consequently, there is an urgent need for automated, efficient, and dependable solutions capable of detecting and quantifying Plasmodium vivax parasites and their developmental stages within blood smears. Such advancements would enhance diagnostic accuracy, promote effective treatment, and strengthen malaria control initiatives.
 
 ## Project Objectives
 
@@ -51,7 +62,6 @@ This project employs YOLOv8 for multiclass object detection, leveraging its adva
 ## Project Overview
 
 <img width="909" height="225" alt="image" src="https://github.com/user-attachments/assets/93ad134d-cf7d-479a-a33d-67afb28369d8" />
-
 
 ## Deep learning Model Architecture
 
@@ -91,9 +101,9 @@ Other metrics to help understand mAP@0.5 & mAP@0.5-0.95 performance metrics in Y
 
 ## Methodology
 
-### Data Preparation
+### 1.0 Data Preparation (notebook:1_data_preparation.ipynb)
 
-#### Checking for Data Imbalance
+#### 1.1 Checking for Data Imbalance
 
 The number of images in training subset was 1208 & 120 images for the test subset. Class Imbalance noted in the train, val and test image subsets as shown in the charts below. The imbalance is severe with 96% of the objects being from the red blood cell class. This imbalance is inherent to human blood smears as they have more red blood cells than other cells found in blood.
 
@@ -117,7 +127,7 @@ trophozoite: 111 (1.87%)
 
 <img width="887" height="590" alt="image" src="https://github.com/user-attachments/assets/404e5401-ec87-44b4-b29a-b254e9dcb110" /> 
 
-#### Handling Data Imbalance
+#### 1.2 Handling Data Imbalance
 
 This involved selecting from the 1208 training images, images with only 'Red Blood Cell' annotations, removing them, inorder to reduce class imbalance. 177 images were removed and moved to a separate folder. 1031 images remained for use in model training. The corresponsing training JSON file was updated. 
 
@@ -142,7 +152,7 @@ trophozoite: 111 (1.87%)
 
 <img width="986" height="690" alt="image" src="https://github.com/user-attachments/assets/9e291480-af8c-4e92-b0cd-528911fd6229" />
 
-#### Dataset preparation for YOLOv8N model
+#### 1.3 Dataset preparation for YOLOv8n model
 The following steps were done:
 i. Training and test JSON files were converted to YOLOv8 txt format.
 ii. Creation of class weights
@@ -155,21 +165,22 @@ viii. Creation of a data configuration file appropriate for YOLOv8n model traini
 
 <img width="842" height="491" alt="Screenshot 2026-02-23 192115" src="https://github.com/user-attachments/assets/ae11f4c9-d8de-4e89-ae5c-21d7424b75a9" />
 
-### Model Training
+### 2.0 Model Training (notebook:2_model_train.ipynb)
+
+The prepared dataset was used for training the YOLOv8n model. The training parameters used were:
+
 
 #### Error Analysis
-
 ### Model Evaluation
-
-### Hyperparameter tuning
-
-### Model Evaluation on Test Images
-
+### 3.0 Data Preparation for fine tuning (notebook: 3_data_preparation_for_finetune.ipynb)
+### 4.0 Hyperparameter tuning (notebook: 4_hyperparametertune.ipynb)
+#### Error Analysis
+### Model Evaluation
+### 5.0 Model Evaluation on Test Images
 ### Predicting on test images
-
 ### Model Selection
-
-### Deployment
+## Results
+## Deployment
 https://malaria-parasite-detector-version-2-kuhwhgejcrbgyxsma4pzrp.streamlit.app/
 
 ## Recommendations/Future work
