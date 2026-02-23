@@ -89,14 +89,71 @@ Other metrics to help understand mAP@0.5 & mAP@0.5-0.95 performance metrics in Y
 
 <img width="172" height="38" alt="Screenshot 2025-11-02 at 17 58 54" src="https://github.com/user-attachments/assets/7a788e3c-8038-46ee-90b7-c98468378cb3" />
 
-## Results
+## Methodology
 
 ### Data Preparation
 
-Class Imbalance noted in the train, val and test image subsets as shown in the charts below. The imbalance is severe with 96% of the objects being from the red blood cell class. This imbalance is inherent to human blood smears as they have more red blood cells than other cells found in blood. 
+#### Checking for Data Imbalance
 
-Data preparation entailed:
-1. 
+The number of images in training subset was 1208 & 120 images for the test subset. Class Imbalance noted in the train, val and test image subsets as shown in the charts below. The imbalance is severe with 96% of the objects being from the red blood cell class. This imbalance is inherent to human blood smears as they have more red blood cells than other cells found in blood.
+
+TRAINING set:
+difficult: 441 (0.55%)
+gametocyte: 144 (0.18%)
+leukocyte: 103 (0.13%)
+red blood cell: 77420 (96.64%)
+ring: 353 (0.44%)
+schizont: 179 (0.22%)
+trophozoite: 1473 (1.84%)
+
+ TEST set:
+difficult: 5 (0.08%)
+gametocyte: 12 (0.20%)
+leukocyte: 0 (0.00%)
+red blood cell: 5614 (94.80%)
+ring: 169 (2.85%)
+schizont: 11 (0.19%)
+trophozoite: 111 (1.87%)
+
+<img width="887" height="590" alt="image" src="https://github.com/user-attachments/assets/404e5401-ec87-44b4-b29a-b254e9dcb110" /> 
+
+#### Handling Data Imbalance
+
+This involved selecting from the 1208 training images, images with only 'Red Blood Cell' annotations, removing them, inorder to reduce class imbalance. 177 images were removed and moved to a separate folder. 1031 images remained for use in model training. The corresponsing training JSON file was updated. 
+
+Resulting distribution was:
+TRAINING set (excluding red blood cell only images):
+difficult: 441 (0.64%)
+gametocyte: 144 (0.21%)
+leukocyte: 103 (0.15%)
+red blood cell: 65721 (96.06%)
+ring: 353 (0.52%)
+schizont: 179 (0.26%)
+trophozoite: 1473 (2.15%)
+
+TEST set:
+difficult: 5 (0.08%)
+gametocyte: 12 (0.20%)
+leukocyte: 0 (0.00%)
+red blood cell: 5614 (94.80%)
+ring: 169 (2.85%)
+schizont: 11 (0.19%)
+trophozoite: 111 (1.87%)
+
+<img width="986" height="690" alt="image" src="https://github.com/user-attachments/assets/9e291480-af8c-4e92-b0cd-528911fd6229" />
+
+#### Dataset preparation for YOLOv8N model
+The following steps were done:
+i. Training and test JSON files were converted to YOLOv8 txt format.
+ii. Creation of class weights
+iii. Creation of yolov8_malaria dataset folder with image & labels subfolders
+iv. Creation of test, training & val folders in images directory
+v. Creation of val folder in labels directory
+vi. Moving of some training images to the val image and label subfolders from the training folders to have a val folder with 206 images. 
+vii. Updating of the resulting training set folders  (image & labels folder) to result in 825 images. 
+viii. Creation of a data configuration file appropriate for YOLOv8n model training.
+
+<img width="842" height="491" alt="Screenshot 2026-02-23 192115" src="https://github.com/user-attachments/assets/ae11f4c9-d8de-4e89-ae5c-21d7424b75a9" />
 
 ### Model Training
 
