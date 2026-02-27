@@ -1,5 +1,13 @@
-https://img.shields.io/badge/yolov8n-blue
 # Plasmodium Vivax (malaria) parasite detector and counter using YOLOv8n Model version 2
+
+![Python](https://img.shields.io/badge/Python-3.8+-blue?style=flat&logo=python&logoColor=white)
+![YOLOv8](https://img.shields.io/badge/YOLOv8-Nano-00BFFF?style=flat)
+![Framework](https://img.shields.io/badge/Framework-Ultralytics-purple?style=flat)
+![Streamlit](https://img.shields.io/badge/App-Streamlit-FF4B4B?style=flat&logo=streamlit&logoColor=white)
+![Dataset](https://img.shields.io/badge/Dataset-BBBC041-orange?style=flat)
+![Images](https://img.shields.io/badge/Training%20Images-1031-green?style=flat)
+![Classes](https://img.shields.io/badge/Classes-7-yellow?style=flat)
+![License](https://img.shields.io/badge/License-MIT-lightgrey?style=flat)
 
 This repository is an update on a previous repository https://github.com/WNderitu/Malaria-parasite-P.Vivax-detector-and-counter.git. In this repository, 1031 images utilised in model training. 
 
@@ -23,7 +31,7 @@ Africa had a heavy burden of malaria especially in Sub Saharan Africa.(Source: W
 
 ### Malaria Diagnosis and Need for Advanced Detection Systems
 
-The gold standard test for the diagnosis of malaria is microscopy. The test involves examining and detecting malaria parasite in a patient’s blood sample. The microscopist identifies the type of parasite, the different lifecycle stages & the parasite quantity/load. In the laboratory, a Giemsa-stained thick blood smear is prepared from the patient's blood sample by a microscopist. This process is normally manual, time consuming and requires a skilled and expert microscopist. In some settings there is a shortage of laboratory personell with the required skills. In addititon, ensuring expert slide preparation and reading can be difficult and in some rural settings, microscopy is often unavailable. 
+The gold standard test for the diagnosis of malaria is microscopy. The test involves examining and detecting malaria parasite in a patient's blood sample. The microscopist identifies the type of parasite, the different lifecycle stages & the parasite quantity/load. In the laboratory, a Giemsa-stained thick blood smear is prepared from the patient's blood sample by a microscopist. This process is normally manual, time consuming and requires a skilled and expert microscopist. In some settings there is a shortage of laboratory personell with the required skills. In addititon, ensuring expert slide preparation and reading can be difficult and in some rural settings, microscopy is often unavailable. 
 
 It is important for there to be accurate and quick detection of parasites in patient's blood smears so as to have prompt treatment and prevention of disease relapse especially in the case of malaria caused by Plasmodium Vivax parasite. Therefore there is a need for advanced detection systems such as artificial intelligent aided systems. This systems may improve improve reliability and efficiency in identifying malaria parasites causing malaria infections.
 
@@ -149,13 +157,21 @@ trophozoite: 111 (1.87%)
 
 #### 1.3 Dataset preparation for YOLOv8n model
 The following steps were done:
+
 i. Training and test JSON files were converted to YOLOv8 txt format.
+
 ii. Creation of class weights
+
 iii. Creation of yolov8_malaria dataset folder with image & labels subfolders
+
 iv. Creation of test, training & val folders in images directory
+
 v. Creation of val folder in labels directory
+
 vi. Moving of some training images to the val image and label subfolders from the training folders to have a val folder with 206 images. 
+
 vii. Updating of the resulting training set folders  (image & labels folder) to result in 825 images. 
+
 viii. Creation of a data configuration file appropriate for YOLOv8n model training.
 
 <img width="842" height="491" alt="Screenshot 2026-02-23 192115" src="https://github.com/user-attachments/assets/ae11f4c9-d8de-4e89-ae5c-21d7424b75a9" />
@@ -226,5 +242,3 @@ The selected model was deployed on streamlit app (app (1).py). The app can be ac
 3. https://docs.ultralytics.com/datasets/
 4. https://abintimilsina.medium.com/yolov8-architecture-explained-a5e90a560ce5]
 5. Link to data: Broad Bioimage Benchmark Collection website https://bbbc.broadinstitute.org/BBBC041/
-
-
