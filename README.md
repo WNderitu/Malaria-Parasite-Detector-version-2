@@ -14,15 +14,8 @@ This repository is an update on a previous repository https://github.com/WNderit
 ## Introduction
 
 ### Malaria
-- A life-threatening disease, caused by Plasmodium parasites transmitted by female Anopheles mosquitoes and is most commonly found in tropical and subtropical regions.
-- Five types of plasmodium parasites cause malaria;
-  -   _Plasmodium Vivax_ (focus of this project)
-  -   _Plasmodium Falciparum_
-  -   _Plasmodium Ovale_
-  -   _Plasmodium Malariae_
-  -   _Plasmodium Knowelsi_
 
-Malaria parasites undergo different lifecycle stages namely: hypnozoite, merozoite, ring, trophozoite, schizont and gametocyte while in human blood and tissues. Four lifecycle stages may be detected in infected human red blood cells during a parasites life cycle in man. 
+A life-threatening disease, caused by Plasmodium parasites transmitted by female Anopheles mosquitoes. Five types of plasmodium parasites cause malaria; _Plasmodium Vivax_ (focus of this project), _Plasmodium Falciparum_, _Plasmodium Ovale_, _Plasmodium Malariae_ and _Plasmodium Knowelsi_. Malaria parasites undergo different lifecycle stages namely: hypnozoite, merozoite, ring, trophozoite, schizont and gametocyte while in human blood and tissues. Four lifecycle stages may be detected in infected human red blood cells during a parasites life cycle in man. 
 
 ### Malaria Disease Burden in 2024
 
