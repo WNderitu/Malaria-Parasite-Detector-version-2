@@ -30,6 +30,14 @@ It is important for there to be accurate and quick detection of parasites in pat
 
 The detection of Plasmodium vivax malaria remains challenging, primarily due to the morphological similarities between parasite lifecycle stages in infected red blood cells and other blood components observed in microscopic images. Conventional microscopy is a labor-intensive process that is susceptible to human error and demands specialized expertise, which may be limited in under-resourced settings. Consequently, there is an urgent need for automated, efficient, and dependable solutions capable of detecting and quantifying Plasmodium vivax parasites and their developmental stages within blood smears. Such advancements would enhance diagnostic accuracy, promote effective treatment, and strengthen malaria control initiatives.
 
+## Proposed Solution
+
+A YOLOv8n model for detecting infected red blood cells and the parasite stage in the red blood cells and counting the number of parasite stages per image. This is a computer vison model. 
+
+A diagram illustrating the solution is shown.
+
+<img width="1381" height="677" alt="image" src="https://github.com/user-attachments/assets/3ff66565-0bcd-46ae-b2c5-a8db50e0a5c7" />
+
 ## Project Objectives
 
 1.	To develop a computer vision model for object detection and counting
@@ -187,29 +195,35 @@ Hyperparameter tuning was done twice (Fine Tune 1 & Fine Tune 2). Based on the r
 
 <img width="846" height="547" alt="image" src="https://github.com/user-attachments/assets/27de94b9-6f1b-4080-a26b-423f81a33625" />
 
-### Model Evaluation
-### 5.0 Model Evaluation on Test Images
-### Predicting on test images
-### Model Selection
-## Results
-## Deployment
-https://malaria-parasite-detector-version-2-kuhwhgejcrbgyxsma4pzrp.streamlit.app/
+### 4.0 Model Evaluation on Test Images (notebook: 5_model_eval_test.ipynb
+
+Model evaluation parameters used include: image size of 1280, confidenece threshold of 0.001 and iou of 0.7. Model did not perform as expected due to the inherently imbalanced microscopic image dataset. A microscopic image of a blood smear will always have red blood cells in abundance which makes the model have few examples of parasite classes to learn effectively from.  
+
+<img width="1660" height="451" alt="image" src="https://github.com/user-attachments/assets/cb4a8535-1591-4825-8e27-d6487e1d690f" />
+
+Overall, the model had poor performance in detecting all classes. In regard to per class performance, the model had good performance in detecting red blood cell class and was heavily biased on detecting classes as being red blood cells. Poor performance was noted in detecting the 3 rare classes; schizont, ring and gametocyte classes. Moderate performance was noted in detecting the trophozoite class. 
+
+### 5.0 Deployment
+
+The selected model was deployed on streamlit app (app (1).py). The app can be accessed at https://malaria-parasite-detector-version-2-kuhwhgejcrbgyxsma4pzrp.streamlit.app/
 
 ## Recommendations/Future work
+
 1. Use larger YOLOv8 model e.g. medium variant
-2. Use 2 stages for detecting & classifying malaria parasites
+2. Develop 2 stages for detecting & classifying malaria parasites
   - 1st stage: detect uninfected red blood cells vs. infected red blood cells with YOLOv8 model
   - 2nd stage: classify infected red blood cells into various parasite stages with an image classifier model e.g. AlexNet, EfficientNet, GoogLeNet, ResNet , MobileNet, Vision Transformers (ViT) etc..
+3. Expand model to detect other types of malaria – multi type malaria parasite detector
 
 ## Acknowledgements & Attributions
 1. We used image set BBBC041v1, available from the Broad Bioimage Benchmark Collection (Ljosa et al., Nature Methods, 2012)
 2. Image of YOLOv8 model architecture from: https://abintimilsina.medium.com/yolov8-architecture-explained-a5e90a560ce5
-3. Image of P.Vivax lifecylce. Quique Bassat, CC BY 4.0 <https://creativecommons.org/licenses/by/4.0>, via Wikimedia Commons
 
 ## References
 1. https://www.who.int/health-topics/malaria#tab=tab_1
-2. https://docs.ultralytics.com/datasets/
-3. https://abintimilsina.medium.com/yolov8-architecture-explained-a5e90a560ce5]
-4. Link to data: Broad Bioimage Benchmark Collection website https://bbbc.broadinstitute.org/BBBC041/
+2. https://www.who.int/teams/global-malaria-programme/reports/world-malaria-report-2025
+3. https://docs.ultralytics.com/datasets/
+4. https://abintimilsina.medium.com/yolov8-architecture-explained-a5e90a560ce5]
+5. Link to data: Broad Bioimage Benchmark Collection website https://bbbc.broadinstitute.org/BBBC041/
 
 
