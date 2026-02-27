@@ -14,7 +14,7 @@ from io import BytesIO
 
 # Set page configuration
 st.set_page_config(
-    page_title="Malaria Parasite (P.vivax) Detector v2",
+    page_title="AI Enabled Malaria Parasite Detector",
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
