@@ -40,17 +40,7 @@ The detection of Plasmodium vivax malaria remains challenging, primarily due to 
 
 ## Image Dataset
 
-- Images obtained from Broad Bioimage Benchmark Collection website <https://bbbc.broadinstitute.org/BBBC041/>
-- The dataset consists of image folder, training json file & test json file
-- There are 1,328 microscopic images of blood smears.
-- Image resolution:1600x1200
-- Infected red blood cells contain Plasmodium vivax parasites.
-- Class label & set of bounding box coordinates given for each image.
-- 7 Class labels: red blood cell (uninfected), trophozoite, gametocyte, schizont, difficult, ring & leukocyte (uninfected)
-- The Red Blood Cell and Leukocyte classes are blood cells that are not infected with the malaria parasite.
-- The Trophozoite, Schizont, Ring and Gametocyte are different growth stages of the malaria parasite
-- The difficult class label is for observed growth stages that couldn't be grouped into either of the 4 growth classes.
-- Sample images from the dataset
+Images obtained from Broad Bioimage Benchmark Collection website <https://bbbc.broadinstitute.org/BBBC041/>. The dataset consists of an image folder, training json file & test json file. There are 1,328 microscopic images of blood smears with a resolution of 600x1200. The blood smears contain red blood cells infected with _Plasmodium vivax_ parasite. For each image, a class label and set of bounding box coordinates are given. There are 7 Class labels: red blood cell (uninfected), trophozoite, gametocyte, schizont, difficult, ring & leukocyte (uninfected). The Red Blood Cell and Leukocyte classes are blood cells that are not infected with the malaria parasite. The Trophozoite, Schizont, Ring and Gametocyte are different growth stages of the malaria parasite. The difficult class label is for observed parasite growth stages that couldn't be grouped into either of the 4 growth classes. Sample images from the dataset are shown. 
 
 <img width="491" height="325" alt="image" src="https://github.com/user-attachments/assets/24c25e2a-f8b3-47c6-837b-bb9d800e3430" />
 
