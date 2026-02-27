@@ -1,7 +1,7 @@
 import streamlit as st
 import cv2
 import numpy as np
-from PIL import Image
+from PIL import Image as PILImage
 import os
 import pandas as pd
 import io
@@ -11,6 +11,12 @@ from datetime import datetime
 import time
 import zipfile
 from io import BytesIO
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import cm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable, Image as RLImage
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
 
 # Set page configuration
 st.set_page_config(
@@ -51,7 +57,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- File Paths ---
-base_path = os.path.dirname(os.path.abspath(__file__))
+base_path = os.path.dirname(__file__)
 model_path = os.path.join(base_path, 'best.onnx')
 classes_path = os.path.join(base_path, 'classes.txt')
 
@@ -434,6 +440,186 @@ def create_confidence_histogram(class_confidences):
     )
     return chart
 
+# --- PDF Report Generation ---
+def generate_pdf_report(results_summary, all_annotated_images):
+    """Generate a formatted PDF report of detection results using reportlab."""
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(
+        buffer, pagesize=A4,
+        rightMargin=2*cm, leftMargin=2*cm,
+        topMargin=2*cm, bottomMargin=2*cm
+    )
+
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle('Title', parent=styles['Title'], fontSize=18, textColor=colors.HexColor('#1f77b4'), spaceAfter=6, alignment=TA_CENTER)
+    heading_style = ParagraphStyle('Heading', parent=styles['Heading2'], fontSize=13, textColor=colors.HexColor('#1f77b4'), spaceBefore=12, spaceAfter=4)
+    subheading_style = ParagraphStyle('SubHeading', parent=styles['Heading3'], fontSize=11, textColor=colors.HexColor('#333333'), spaceBefore=8, spaceAfter=4)
+    normal_style = ParagraphStyle('Normal', parent=styles['Normal'], fontSize=9, spaceAfter=3)
+    small_style = ParagraphStyle('Small', parent=styles['Normal'], fontSize=8, textColor=colors.HexColor('#555555'))
+    disclaimer_style = ParagraphStyle('Disclaimer', parent=styles['Normal'], fontSize=8, textColor=colors.HexColor('#cc0000'), spaceBefore=6)
+
+    story = []
+
+    # --- Title & Header ---
+    story.append(Paragraph("Malaria Parasite (P. vivax) Detection Report", title_style))
+    story.append(Paragraph("AI-Enabled Detection System v2.0 — Powered by YOLOv8n", ParagraphStyle('sub', parent=styles['Normal'], fontSize=9, alignment=TA_CENTER, textColor=colors.grey)))
+    story.append(Spacer(1, 6))
+    story.append(HRFlowable(width="100%", thickness=2, color=colors.HexColor('#1f77b4')))
+    story.append(Spacer(1, 4))
+    story.append(Paragraph(f"Report generated: {datetime.now().strftime('%B %d, %Y at %H:%M:%S')}", small_style))
+    story.append(Paragraph(f"Total images analysed: {len(results_summary)}", small_style))
+    story.append(Spacer(1, 10))
+
+    # --- Disclaimer ---
+    story.append(Paragraph(
+        "⚠ DISCLAIMER: This report is generated for research and screening purposes only. "
+        "Results must not be used as the sole basis for clinical diagnosis. "
+        "Always consult a qualified healthcare professional.",
+        disclaimer_style
+    ))
+    story.append(Spacer(1, 10))
+    story.append(HRFlowable(width="100%", thickness=0.5, color=colors.lightgrey))
+
+    # --- Batch Summary (if more than 1 image) ---
+    if len(results_summary) > 1:
+        story.append(Paragraph("Batch Summary", heading_style))
+        parasitemias = [float(r['Parasitemia (%)']) for r in results_summary]
+        total_parasites_all = sum(r['Total Parasites'] for r in results_summary)
+        positive_count = sum(1 for r in results_summary if r['Total Parasites'] > 0)
+
+        summary_data = [
+            ['Metric', 'Value'],
+            ['Total Images Analysed', str(len(results_summary))],
+            ['Positive Samples (parasites detected)', f"{positive_count} / {len(results_summary)}"],
+            ['Average Parasitemia', f"{sum(parasitemias)/len(parasitemias):.2f}%"],
+            ['Maximum Parasitemia', f"{max(parasitemias):.2f}%"],
+            ['Total Parasites Detected (all images)', str(total_parasites_all)],
+        ]
+        summary_table = Table(summary_data, colWidths=[10*cm, 6*cm])
+        summary_table.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#1f77b4')),
+            ('TEXTCOLOR', (0,0), (-1,0), colors.white),
+            ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0,0), (-1,-1), 9),
+            ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.HexColor('#f0f4f8'), colors.white]),
+            ('GRID', (0,0), (-1,-1), 0.4, colors.HexColor('#cccccc')),
+            ('PADDING', (0,0), (-1,-1), 5),
+        ]))
+        story.append(summary_table)
+        story.append(Spacer(1, 12))
+        story.append(HRFlowable(width="100%", thickness=0.5, color=colors.lightgrey))
+
+    # --- Per-Image Results ---
+    story.append(Paragraph("Detailed Results Per Image", heading_style))
+
+    # Build a lookup for annotated images by filename
+    img_lookup = {name: arr for name, arr in all_annotated_images}
+
+    for idx, result in enumerate(results_summary):
+        story.append(Paragraph(f"Image {idx+1}: {result['Image']}", subheading_style))
+
+        # Annotated image
+        img_array = img_lookup.get(result['Image'])
+        if img_array is not None:
+            try:
+                pil_img = PILImage.fromarray(img_array)
+                img_buf = BytesIO()
+                pil_img.save(img_buf, format='JPEG', quality=70)
+                img_buf.seek(0)
+                rl_img = RLImage(img_buf, width=12*cm, height=6*cm)
+                rl_img.hAlign = 'CENTER'
+                story.append(rl_img)
+                story.append(Spacer(1, 6))
+            except Exception:
+                pass
+
+        # Key metrics table
+        parasitemia = float(result['Parasitemia (%)'])
+        severity = result['Severity']
+        severity_color = {
+            'Negative': colors.HexColor('#28a745'),
+            'Minimal': colors.HexColor('#90d67f'),
+            'Mild': colors.HexColor('#ffc107'),
+            'Moderate': colors.HexColor('#fd7e14'),
+            'Severe': colors.HexColor('#dc3545'),
+        }.get(severity, colors.grey)
+
+        metrics_data = [
+            ['Metric', 'Value'],
+            ['Timestamp', result['Timestamp']],
+            ['Processing Time', f"{result['Processing_Time_s']} s"],
+            ['Total Cells Detected', str(result['Total Detections'])],
+            ['Total Parasites Detected', str(result['Total Parasites'])],
+            ['Parasitemia (%)', f"{parasitemia:.2f}%"],
+            ['Severity Classification', severity],
+        ]
+        metrics_table = Table(metrics_data, colWidths=[8*cm, 8*cm])
+        metrics_table.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#1f77b4')),
+            ('TEXTCOLOR', (0,0), (-1,0), colors.white),
+            ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0,0), (-1,-1), 9),
+            ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.HexColor('#f0f4f8'), colors.white]),
+            ('GRID', (0,0), (-1,-1), 0.4, colors.HexColor('#cccccc')),
+            ('PADDING', (0,0), (-1,-1), 5),
+            ('TEXTCOLOR', (1,6), (1,6), severity_color),
+            ('FONTNAME', (1,6), (1,6), 'Helvetica-Bold'),
+        ]))
+        story.append(metrics_table)
+        story.append(Spacer(1, 8))
+
+        # Per-class counts table
+        class_keys = ['red blood cell', 'leukocyte', 'trophozoite', 'ring', 'schizont', 'gametocyte']
+        class_display = ['Red Blood Cell', 'Leukocyte', 'Trophozoite', 'Ring', 'Schizont', 'Gametocyte']
+        class_data = [['Cell / Parasite Class', 'Count']]
+        for key, display in zip(class_keys, class_display):
+            count = result.get(key, 0)
+            class_data.append([display, str(count)])
+
+        class_table = Table(class_data, colWidths=[8*cm, 8*cm])
+        class_table.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#4a90a4')),
+            ('TEXTCOLOR', (0,0), (-1,0), colors.white),
+            ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0,0), (-1,-1), 9),
+            ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.HexColor('#f0f4f8'), colors.white]),
+            ('GRID', (0,0), (-1,-1), 0.4, colors.HexColor('#cccccc')),
+            ('PADDING', (0,0), (-1,-1), 5),
+        ]))
+        story.append(class_table)
+        story.append(Spacer(1, 6))
+        story.append(HRFlowable(width="100%", thickness=0.5, color=colors.lightgrey))
+        story.append(Spacer(1, 8))
+
+    # --- Model Info Footer ---
+    story.append(Paragraph("Model Information", heading_style))
+    model_data = [
+        ['Parameter', 'Value'],
+        ['Model', 'YOLOv8n (Fine-tuned on P. vivax dataset)'],
+        ['Input Resolution', '1280 x 1280 px'],
+        ['Overall mAP50', '0.400'],
+        ['Overall mAP50-95', '0.301'],
+        ['F1-Score', '0.391'],
+        ['Dataset', 'BBBC041v1 (Broad Bioimage Benchmark Collection)'],
+        ['Dataset License', 'CC BY-NC-SA 3.0'],
+    ]
+    model_table = Table(model_data, colWidths=[8*cm, 8*cm])
+    model_table.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#1f77b4')),
+        ('TEXTCOLOR', (0,0), (-1,0), colors.white),
+        ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0,0), (-1,-1), 9),
+        ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.HexColor('#f0f4f8'), colors.white]),
+        ('GRID', (0,0), (-1,-1), 0.4, colors.HexColor('#cccccc')),
+        ('PADDING', (0,0), (-1,-1), 5),
+    ]))
+    story.append(model_table)
+
+    doc.build(story)
+    buffer.seek(0)
+    return buffer.read()
+
+
 # --- Helper: load sample image bytes from local disk ---
 @st.cache_data(show_spinner=False)
 def load_local_image_bytes(filepath: str):
@@ -459,20 +645,15 @@ with st.expander("📸 Need test images? View & download example blood smears", 
     SAMPLE_IMAGES = [
         {
             "label": "Sample 1",
-            "filepath": os.path.join(base_path,"sample_images", "sample_1.jpg"),
+            "filepath": os.path.join(base_path, "sample_images", "sample_1.jpg"),
             "description": "Blood smear – contains infected RBCs",
             "filename": "sample_blood_smear_1.jpg",
         },
         {
             "label": "Sample 2",
-            "filepath": os.path.join(base_path,"sample_images", "sample_2.jpg"),
-            "description": "Blood smear – contains infected RBCs",
+            "filepath": os.path.join(base_path, "sample_images", "sample_2.jpg"),
+            "description": "Blood smear – multiple parasite stages visible",
             "filename": "sample_blood_smear_2.jpg",
-        },
-        {    "label": "Sample 3",
-            "filepath": os.path.join(base_path,"sample_images", "sample_3.jpg"),
-            "description":"Blood smear – contains infected RBCs",
-            "filename": "sample_blood_smear_3.jpg",    
         },
     ]
 
@@ -547,7 +728,7 @@ if uploaded_files and session and class_names:
             status_text.text(f"Processing image {i+1}/{total_images}: {file.name}...")
 
             start_time = time.time()
-            image = Image.open(file)
+            image = PILImage.open(file)
             detected_img_cv, class_counts, class_confidences, dim_warning = process_image(
                 session, image, confidence_threshold, nms_threshold, class_names,
                 show_boxes, show_labels, show_confidence, show_only_parasites,
@@ -693,7 +874,7 @@ if uploaded_files and session and class_names:
                 zip_buffer = BytesIO()
                 with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
                     for img_name, img_array in all_annotated_images:
-                        pil_img = Image.fromarray(img_array)
+                        pil_img = PILImage.fromarray(img_array)
                         img_buffer = BytesIO()
                         pil_img.save(img_buffer, format='PNG')
                         zip_file.writestr(f"annotated_{img_name}", img_buffer.getvalue())
@@ -708,13 +889,16 @@ if uploaded_files and session and class_names:
                 )
 
         with col3:
-            st.button(
-                "📑 Generate PDF Report",
-                help="PDF report generation (requires additional setup)",
-                disabled=True,
-                use_container_width=True
-            )
-            st.caption("Coming soon!")
+            if results_summary:
+                pdf_bytes = generate_pdf_report(results_summary, all_annotated_images)
+                st.download_button(
+                    label="📑 Download PDF Report",
+                    data=pdf_bytes,
+                    file_name=f"malaria_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf",
+                    mime="application/pdf",
+                    help="Download a formatted PDF report of all detection results",
+                    use_container_width=True
+                )
 
 elif not session:
     st.error("❌ ONNX model could not be loaded. Please check the path and file integrity.")
