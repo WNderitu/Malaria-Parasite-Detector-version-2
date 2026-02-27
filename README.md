@@ -151,7 +151,7 @@ viii. Creation of a data configuration file appropriate for YOLOv8n model traini
 
 <img width="842" height="491" alt="Screenshot 2026-02-23 192115" src="https://github.com/user-attachments/assets/ae11f4c9-d8de-4e89-ae5c-21d7424b75a9" />
 
-### 2.0 Model Training & Evaluation
+### 2.0 Model Training & Evaluation - Train 1
 
 The prepared dataset was used for training the YOLOv8n model (see notebook:2_model_train.ipynb). Image size used for training was 1280 with a batch size of 8, 500 epochs with early stop at 300 and a learning rate of 0.001. Augmentations for microscopy were implemented such as small object augmentations, colour augmentations and geometric augmentations. Class weights were also applied. Class loss and box loss was also implemented. This first training was interrupted 3 times due to GPU timeout, adding of aggressive learning rate decay andmno improvement to finally end training at epoch 354/500. 
 
@@ -167,12 +167,14 @@ The prepared dataset was used for training the YOLOv8n model (see notebook:2_mod
 
 <img width="691" height="393" alt="image" src="https://github.com/user-attachments/assets/76eef77c-ae7d-43de-9700-80d5ba048da0" />
 
+
 <img width="1254" height="301" alt="image" src="https://github.com/user-attachments/assets/2a316fb6-92d9-41bd-8bfc-446c8ef9fffa" />
 
+Based on the resulting metrics for precision, recall, mAP50, mAP50-95 and per class metrics, fine tuning of the model was planned. Before fine tuning could be done, the dataset was further processed to try and improve the metrics (see notebook: 3_data_preparation_for_finetune.ipynb). This involved removing the difficult class entirely as it was confusing the model and merging ti twith the trophozoite class. 
 
-Based on the resulting metrics for precision, recall, mAP50, mAP50-95 and per class metrics, fine tuning of the model was planned. Before fine tuning could be done, the dataset was further processed to try and improve the metrics (see notebook: 3_data_preparation_for_finetune.ipynb). This involved 
+### 3.0 Hyperparameter tuning (notebook: 4_hyperparametertune.ipynb)
 
-### 4.0 Hyperparameter tuning (notebook: 4_hyperparametertune.ipynb)
+
 #### Error Analysis
 ### Model Evaluation
 ### 5.0 Model Evaluation on Test Images
