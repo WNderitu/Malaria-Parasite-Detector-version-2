@@ -51,7 +51,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- File Paths ---
-base_path = os.path.dirname(__file__)
+base_path = os.path.dirname(os.path.abspath(__file__))
 model_path = os.path.join(base_path, 'best.onnx')
 classes_path = os.path.join(base_path, 'classes.txt')
 
