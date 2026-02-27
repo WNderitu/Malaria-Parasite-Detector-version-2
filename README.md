@@ -1,3 +1,4 @@
+https://img.shields.io/badge/yolov8n-blue
 # Plasmodium Vivax (malaria) parasite detector and counter using YOLOv8n Model version 2
 
 This repository is an update on a previous repository https://github.com/WNderitu/Malaria-parasite-P.Vivax-detector-and-counter.git. In this repository, 1031 images utilised in model training. 
