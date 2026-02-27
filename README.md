@@ -170,12 +170,23 @@ The prepared dataset was used for training the YOLOv8n model (see notebook:2_mod
 
 <img width="1254" height="301" alt="image" src="https://github.com/user-attachments/assets/2a316fb6-92d9-41bd-8bfc-446c8ef9fffa" />
 
-Based on the resulting metrics for precision, recall, mAP50, mAP50-95 and per class metrics, fine tuning of the model was planned. Before fine tuning could be done, the dataset was further processed to try and improve the metrics (see notebook: 3_data_preparation_for_finetune.ipynb). This involved removing the difficult class entirely as it was confusing the model and merging ti twith the trophozoite class. 
+Based on the resulting metrics for precision, recall, mAP50, mAP50-95 and per class metrics, fine tuning of the model was planned. Before fine tuning could be done, the dataset was further processed to try and improve the metrics (see notebook: 3_data_preparation_for_finetune.ipynb). This involved removing the difficult class entirely as it was confusing the model and merging with the trophozoite class. 
 
 ### 3.0 Hyperparameter tuning (notebook: 4_hyperparametertune.ipynb)
+Hyperparameter tuning was done twice (Fine Tune 1 & Fine Tune 2). Based on the resulting metrics, fine tune 1 model was chosen for evaluation on 120 test images and deployment. The model had significantly better Recall (fewer missed detections) for common (Trophozoite) and rare (Gametocyte) classes, the accuracy was marginally higher and performed best on detecting the different parasite classes. The metrics are shown. 
 
+<img width="1632" height="403" alt="image" src="https://github.com/user-attachments/assets/6add65e4-9c36-42b8-9361-470ce457bc1b" />
 
-#### Error Analysis
+<img width="691" height="393" alt="image" src="https://github.com/user-attachments/assets/2df855fe-2a3f-43d6-be97-ed593c3e7306" />
+
+<img width="691" height="393" alt="image" src="https://github.com/user-attachments/assets/ae5b6239-3a3b-40e2-ae6b-7494ef9adb9a" />
+
+<img width="691" height="393" alt="image" src="https://github.com/user-attachments/assets/998861f9-e4d1-44ff-910e-2fd7766dcf5d" />
+
+<img width="699" height="393" alt="image" src="https://github.com/user-attachments/assets/b643cc9a-098f-477e-accf-cd0c867b3485" />
+
+<img width="846" height="547" alt="image" src="https://github.com/user-attachments/assets/27de94b9-6f1b-4080-a26b-423f81a33625" />
+
 ### Model Evaluation
 ### 5.0 Model Evaluation on Test Images
 ### Predicting on test images
