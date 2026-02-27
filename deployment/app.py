@@ -14,7 +14,7 @@ from io import BytesIO
 
 # Set page configuration
 st.set_page_config(
-    page_title="Malaria Parasite (P.vivax) Detector v2",
+    page_title="AI Enabled Malaria Parasite Detector",
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
@@ -87,80 +87,44 @@ def load_class_names(classes_path):
 session = load_onnx_model(model_path)
 class_names = load_class_names(classes_path)
 
-# --- Diagnostic and Chart Helper Functions (Fixes NameError) ---
-
-def get_diagnostic_interpretation(parasitemia, total_parasites, class_counts):
-    """Provides a severity level and interpretation based on WHO guidelines."""
-    severity = "Negative"
-    interpretation = []
-    
-    if total_parasites == 0:
-        severity = "Negative"
-        interpretation.append("Diagnosis: Negative.")
-        interpretation.append("No parasites detected in this sample.")
-    elif parasitemia < 0.1:
-        severity = "Minimal"
-        interpretation.append(f"Diagnosis: Minimal Parasitemia ({parasitemia:.2f}%)")
-        interpretation.append("Monitor closely. Low-level infection detected, requires microscopy confirmation.")
-    elif parasitemia < 2.0:
-        severity = "Mild"
-        interpretation.append(f"Diagnosis: Mild Parasitemia ({parasitemia:.2f}%)")
-        interpretation.append("Low-level infection. Outpatient treatment may be appropriate. Follow up with physician.")
-    elif parasitemia < 5.0:
-        severity = "Moderate"
-        interpretation.append(f"Diagnosis: Moderate Parasitemia ({parasitemia:.2f}%)")
-        interpretation.append("Significant infection level. Close clinical monitoring and treatment required.")
-    else: # >= 5.0
-        severity = "Severe"
-        interpretation.append(f"Diagnosis: Severe Parasitemia ({parasitemia:.2f}%)")
-        interpretation.append("🔴 HIGH RISK: High parasite burden detected. IMMEDIATE medical attention required.")
-
-    # Additional Checks for P. vivax severity factors
-    if class_counts.get('schizont', 0) > 0:
-        interpretation.append("⚠️ Schizonts Detected: Presence of schizonts suggests active, late-stage multiplication and is an indicator of potentially severe disease.")
-    if class_counts.get('gametocyte', 0) > 0:
-        interpretation.append("🦠 Gametocytes Detected: Patient may be capable of transmitting the disease to mosquitoes.")
-        
-    return severity, interpretation
-
-def create_confidence_histogram(class_confidences):
-    """Creates an Altair histogram for confidence score distribution."""
-    data = []
-    for class_name, confs in class_confidences.items():
-        if confs:
-            for conf in confs:
-                data.append({'Class': class_name, 'Confidence': conf})
-
-    if not data:
-        return None
-
-    df_conf = pd.DataFrame(data)
-
-    chart = alt.Chart(df_conf).mark_bar().encode(
-        x=alt.X("Confidence:Q", bin=alt.Bin(maxbins=20), title="Confidence Score (Binned)"),
-        y=alt.Y("count()", title="Number of Detections"),
-        color=alt.Color("Class:N", legend=alt.Legend(title="Class")),
-        tooltip=["Class:N", alt.Tooltip("Confidence:Q", bin=True), "count():Q"]
-    ).properties(
-        title="Confidence Score Distribution"
-    )
-    return chart
-
 # --- Color Legend in Sidebar ---
 def display_color_legend(color_scheme="Default"):
-    # (Simplified color map creation for legend)
-    COLOR_MAPS = {
-        "Default": {'Red Blood Cell': (0, 0, 255), 'Leukocyte': (255, 255, 0), 'Schizont': (0, 255, 0), 'Ring': (0, 255, 255), 'Gametocyte': (255, 0, 255), 'Trophozoite': (255, 165, 0)},
-        "High Contrast": {'Red Blood Cell': (255, 0, 0), 'Leukocyte': (255, 255, 0), 'Schizont': (0, 255, 255), 'Ring': (0, 255, 0), 'Gametocyte': (255, 0, 255), 'Trophozoite': (255, 128, 0)},
-        "Pastel": {'Red Blood Cell': (255, 182, 193), 'Leukocyte': (255, 250, 205), 'Schizont': (175, 238, 238), 'Ring': (144, 238, 144), 'Gametocyte': (221, 160, 221), 'Trophozoite': (255, 218, 185)},
+    DEFAULT_COLOR_MAP = {
+        'Red Blood Cell': (255, 0, 0),
+        'Leukocyte': (255, 255, 0),
+        'Schizont': (0, 255, 255),
+        'Ring': (0, 255, 0),
+        'Gametocyte': (255, 0, 255),
+        'Trophozoite': (255, 165, 0),
     }
-    COLOR_MAP = COLOR_MAPS.get(color_scheme, COLOR_MAPS["Default"])
-    
+    HIGH_CONTRAST_MAP = {
+        'Red Blood Cell': (255, 0, 0),
+        'Leukocyte': (255, 255, 0),
+        'Schizont': (0, 255, 255),
+        'Ring': (0, 255, 0),
+        'Gametocyte': (255, 0, 255),
+        'Trophozoite': (255, 128, 0),
+    }
+    PASTEL_MAP = {
+        'Red Blood Cell': (255, 182, 193),
+        'Leukocyte': (255, 250, 205),
+        'Schizont': (175, 238, 238),
+        'Ring': (144, 238, 144),
+        'Gametocyte': (221, 160, 221),
+        'Trophozoite': (255, 218, 185),
+    }
+
+    if color_scheme == "High Contrast":
+        COLOR_MAP = HIGH_CONTRAST_MAP
+    elif color_scheme == "Pastel":
+        COLOR_MAP = PASTEL_MAP
+    else:
+        COLOR_MAP = DEFAULT_COLOR_MAP
+
     st.sidebar.markdown("### 🎨 Color Legend")
     for class_name, color in COLOR_MAP.items():
-        # Convert BGR (used in CV2 mapping below) to RGB for display
-        b, g, r = color # The actual color map in process_image uses BGR (CV2 default)
-        hex_color = f"#{r:02x}{g:02x}{b:02x}" 
+        r, g, b = color
+        hex_color = f"#{r:02x}{g:02x}{b:02x}"
         st.sidebar.markdown(
             f'<div style="display: flex; align-items: center; margin: 5px 0;">'
             f'<div style="width: 20px; height: 20px; background-color: {hex_color}; '
@@ -197,11 +161,11 @@ with st.expander("📖 WHO Parasitemia Classification Guide", expanded=False):
     st.markdown("""
     ### Parasitemia Calculation
     **Parasitemia (%) = (Total Parasites Detected / Total Cells Detected) × 100**
-    
+
     ---
-    
+
     ### Classification Thresholds
-    
+
     | Category | Parasitemia Range | Clinical Significance | Action Required |
     |----------|-------------------|----------------------|-----------------|
     | **Negative** | 0% | No parasites detected | No immediate action |
@@ -209,36 +173,36 @@ with st.expander("📖 WHO Parasitemia Classification Guide", expanded=False):
     | **Mild** | 0.1% - 2% | Low-level infection | Outpatient treatment |
     | **Moderate** | 2% - 5% | Moderate infection | Close monitoring, treatment |
     | **Severe** | > 5% | High parasite burden | **Immediate medical attention required** |
-    
+
     ---
-    
+
     ### Clinical Notes
-    
+
     #### Severe Malaria Indicators (WHO):
     - Parasitemia > 5% in non-immune patients
     - Parasitemia > 10% regardless of immune status
     - Presence of schizonts in peripheral blood
     - Multiple parasite life stages present
-    
+
     #### P. vivax Specific Considerations:
     - P. vivax typically has lower parasitemia than P. falciparum
     - Gametocytes indicate transmission potential
     - Relapses common due to hypnozoites (dormant liver stage)
     - Lower parasitemia can still cause severe symptoms
-    
+
     ---
-    
+
     ### Parasite Life Stages
-    
+
     - **Ring Stage**: Early infection, most common form seen
     - **Trophozoite**: Active feeding stage, larger than rings
     - **Schizont**: Mature stage before red cell rupture, indicates active multiplication
     - **Gametocyte**: Sexual stage, indicates transmission potential to mosquitoes
-    
+
     ---
-    
+
     **⚠️ Important Disclaimer:**
-    
+
     This tool is designed for **research and screening purposes only**. Always consult healthcare professionals for medical decisions.
     """)
 
@@ -257,13 +221,16 @@ with st.expander("📊 Model Evaluation Metrics (Test Set)", expanded=False):
 # --- Sidebar Settings ---
 st.sidebar.header("⚙️ Detection Settings")
 
-# Detection settings - Constrained ranges
 confidence_threshold = st.sidebar.slider(
-    "Global Confidence Threshold", 
+    "Confidence Threshold",
     0.20, 0.40, 0.25, 0.01,
     help="Constrained to 0.20-0.40. Lower values detect more rare parasites but may increase false positives"
 )
-st.sidebar.info("NMS IoU is fixed: 0.75 for Cells, 0.50 for Parasites (Multi-Stage NMS)")
+nms_threshold = st.sidebar.slider(
+    "NMS IoU Threshold",
+    0.60, 0.70, 0.65, 0.01,
+    help="Constrained to 0.60-0.70. Higher values allow more overlapping detections"
+)
 
 st.sidebar.markdown("---")
 st.sidebar.header("🎨 Visualization Settings")
@@ -274,10 +241,8 @@ show_confidence = st.sidebar.checkbox("Show Confidence Scores", value=True)
 show_only_parasites = st.sidebar.checkbox("Show Only Parasite Detections", value=False)
 color_scheme = st.sidebar.selectbox("Color Scheme", ["Default", "High Contrast", "Pastel"], index=0)
 
-# Display color legend
 display_color_legend(color_scheme)
 
-# Add class-specific confidence thresholds
 st.sidebar.markdown("---")
 st.sidebar.subheader("🎯 Advanced Settings")
 use_class_thresholds = st.sidebar.checkbox("Enable Per-Class Thresholds", value=False)
@@ -294,48 +259,35 @@ if use_class_thresholds:
         'leukocyte': st.sidebar.slider("Leukocyte Threshold", 0.20, 0.40, 0.30, 0.01),
     }
 
-# --- Enhanced Image Processing Function with Multi-Stage NMS ---
-def process_image(session, image, conf_threshold, class_names,
+# --- Enhanced Image Processing Function ---
+def process_image(session, image, conf_threshold, nms_threshold, class_names,
                   show_boxes=True, show_labels=True, show_confidence=True,
                   show_only_parasites=False, color_scheme="Default", class_thresholds=None):
-    
     INPUT_WIDTH, INPUT_HEIGHT = 1280, 1280
     img_cv = np.array(image.convert("RGB"))
     original_height, original_width = img_cv.shape[:2]
-    
-    # Check image dimensions
+
     dim_warning = None
     if original_width < 640 or original_height < 640:
         dim_warning = "⚠️ Image resolution is low. For best results, use images ≥ 1280x1280 pixels."
-    
+
     blob = cv2.dnn.blobFromImage(img_cv, 1/255.0, (INPUT_WIDTH, INPUT_HEIGHT), swapRB=True, crop=False)
 
-    # ONNXRuntime inference
     input_name = session.get_inputs()[0].name
     output_name = session.get_outputs()[0].name
     preds = session.run([output_name], {input_name: blob})[0]
     detections = preds[0].T
 
-    # --- NMS Parameters for Multi-Stage approach ---
-    NMS_TH_PARASITE = 0.50  # Stricter NMS for small, critical parasite detections
-    NMS_TH_RBC_LEUKO = 0.75 # Lenient NMS for large, high-overlap cells (RBCs/Leukocytes)
-    
-    # Define classes by their group
-    parasite_classes = {'schizont', 'ring', 'gametocyte', 'trophozoite'}
-    cell_classes = {'red blood cell', 'leukocyte'}
-    parasite_IDs = {class_names.index(c) for c in parasite_classes if c in class_names}
-    
-    # Initialize lists to hold raw, pre-NMS detections, separated by group
-    all_boxes, all_confidences, all_class_ids = [], [], []
-    
-    # Enhanced Color maps (CV2 uses BGR format internally)
+    boxes, confidences, class_ids = [], [], []
+    parasite_IDs = {2, 3, 4, 5}
+
     DEFAULT_COLOR_MAP = {
-        'red blood cell': (0, 0, 255),      # Blue (Appears Red in BGR conversion)
-        'leukocyte': (255, 255, 0),         # Cyan (Appears Yellow)
-        'schizont': (0, 255, 0),            # Green (Appears Green)
-        'ring': (0, 255, 255),              # Yello/Cyan (Appears Yellow)
-        'gametocyte': (255, 0, 255),        # Magenta (Appears Magenta)
-        'trophozoite': (255, 165, 0),       # Orange (Appears Orange)
+        'red blood cell': (0, 0, 255),
+        'leukocyte': (255, 255, 0),
+        'schizont': (0, 255, 255),
+        'ring': (0, 255, 0),
+        'gametocyte': (255, 0, 255),
+        'trophozoite': (255, 165, 0),
         'default': (128, 128, 128)
     }
     HIGH_CONTRAST_MAP = {
@@ -364,90 +316,51 @@ def process_image(session, image, conf_threshold, class_names,
     else:
         COLOR_MAP = DEFAULT_COLOR_MAP
 
-    # --- 1. Filter Raw Detections by Confidence ---
+    class_counts = {name: 0 for name in class_names}
+    class_confidences = {name: [] for name in class_names}
+
     for row in detections:
         confidence = row[4]
         classes_scores = row[5:]
         class_id = np.argmax(classes_scores)
-        
+
         if class_id >= len(class_names):
             continue
-            
+
         detected_class_name = class_names[class_id]
-        
-        # Apply class-specific threshold if enabled
+
         if class_thresholds and detected_class_name in class_thresholds:
             threshold = class_thresholds[detected_class_name]
         else:
             threshold = conf_threshold
-        
+
         if confidence > threshold and classes_scores[class_id] > 0.0:
             x_scale = original_width / INPUT_WIDTH
             y_scale = original_height / INPUT_HEIGHT
             center_x, center_y, width, height = row[0]*x_scale, row[1]*y_scale, row[2]*x_scale, row[3]*y_scale
             x, y, w, h = int(center_x - width/2), int(center_y - height/2), int(width), int(height)
-            
-            all_boxes.append([x, y, w, h])
-            all_confidences.append(float(confidence))
-            all_class_ids.append(class_id)
+            boxes.append([x, y, w, h])
+            confidences.append(float(confidence))
+            class_ids.append(class_id)
 
-    if not all_boxes:
-        return img_cv, {name: 0 for name in class_names}, {name: [] for name in class_names}, dim_warning
+    if not boxes:
+        return img_cv, class_counts, class_confidences, dim_warning
 
-    # --- 2. Separate Detections by NMS Group (Multi-Stage NMS Prep) ---
-    # We use a list of tuples to keep the original index mapping
-    parasite_detections, cell_detections = [], []
-    
-    for i in range(len(all_boxes)):
-        box = all_boxes[i]
-        conf = all_confidences[i]
-        class_id = all_class_ids[i]
-        detection = (box, conf, class_id)
-        detected_class_name = class_names[class_id]
-        
-        if detected_class_name in parasite_classes:
-            parasite_detections.append(detection)
-        elif detected_class_name in cell_classes:
-            cell_detections.append(detection)
+    indices = cv2.dnn.NMSBoxes(boxes, confidences, conf_threshold, nms_threshold)
+    if len(indices) > 0:
+        indices = indices.flatten()
+    else:
+        return img_cv, class_counts, class_confidences, dim_warning
 
-    # --- 3. Apply Group-Specific NMS ---
-    def apply_nms(detections, iou_threshold):
-        if not detections:
-            return []
-        boxes_list = [d[0] for d in detections]
-        conf_list = [d[1] for d in detections]
-        
-        # NOTE: conf_threshold is passed to NMSBoxes as the confidence threshold 
-        # (even though we already filtered by it, it's required by the function signature)
-        indices = cv2.dnn.NMSBoxes(boxes_list, conf_list, conf_threshold, iou_threshold)
-        
-        # Flatten and return the filtered detection tuples
-        filtered_detections = []
-        if len(indices) > 0:
-            for i in indices.flatten():
-                filtered_detections.append(detections[i])
-        return filtered_detections
-
-    # Apply NMS with different thresholds
-    # We use the user's conf_threshold as the base for NMS, which is passed in the apply_nms function
-    final_parasite_detections = apply_nms(parasite_detections, NMS_TH_PARASITE)
-    final_cell_detections = apply_nms(cell_detections, NMS_TH_RBC_LEUKO)
-
-    # --- 4. Combine Final Filtered Detections and Post-Filter ---
-    final_detections = final_parasite_detections + final_cell_detections
-    
     if show_only_parasites:
-        final_detections = [d for d in final_detections if d[2] in parasite_IDs]
+        indices = [i for i in indices if class_ids[i] in parasite_IDs]
 
-    class_counts = {name: 0 for name in class_names}
-    class_confidences = {name: [] for name in class_names}
-
-    # --- 5. Draw Boxes and Calculate Metrics ---
-    for box, conf, class_id in final_detections:
-        x, y, w, h = box
+    for i in indices:
+        x, y, w, h = boxes[i]
+        class_id = class_ids[i]
         detected_class_name = class_names[class_id]
-        
-        # Update counts and confidences
+        conf = confidences[i]
+
         class_counts[detected_class_name] += 1
         class_confidences[detected_class_name].append(conf)
 
@@ -457,31 +370,139 @@ def process_image(session, image, conf_threshold, class_names,
             cv2.rectangle(img_cv, (x, y), (x+w, y+h), color, thickness)
 
         if show_labels:
-            label_text = f"{detected_class_name}: {conf:.2f}" if show_confidence else detected_class_name
-            
-            # Better text visibility with background
-            (text_w, text_h), _ = cv2.getTextSize(label_text, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
+            label = f"{detected_class_name}: {conf:.2f}" if show_confidence else detected_class_name
+            (text_w, text_h), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
             cv2.rectangle(img_cv, (x, y-text_h-8), (x+text_w, y), color, -1)
-            cv2.putText(img_cv, label_text, (x, y-5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,255), 2, cv2.LINE_AA)
+            cv2.putText(img_cv, label, (x, y-5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,255), 2, cv2.LINE_AA)
 
     return img_cv, class_counts, class_confidences, dim_warning
+
+# --- Diagnostic Interpretation ---
+def get_diagnostic_interpretation(parasitemia, total_parasites, class_counts):
+    interpretation = []
+    severity = "Normal"
+
+    if parasitemia == 0:
+        interpretation.append("✅ No parasites detected")
+        severity = "Negative"
+    elif parasitemia < 0.1:
+        interpretation.append("⚠️ Very Low Parasitemia (<0.1%)")
+        severity = "Minimal"
+    elif parasitemia < 2:
+        interpretation.append("⚠️ Low Parasitemia (0.1-2%)")
+        severity = "Mild"
+    elif parasitemia < 5:
+        interpretation.append("⚠️ Moderate Parasitemia (2-5%)")
+        severity = "Moderate"
+    else:
+        interpretation.append("🚨 High Parasitemia (>5%) - Requires immediate attention")
+        severity = "Severe"
+
+    parasite_stages = ['schizont', 'ring', 'gametocyte', 'trophozoite']
+    stage_counts = {stage: class_counts.get(stage, 0) for stage in parasite_stages}
+
+    if stage_counts['gametocyte'] > 0:
+        interpretation.append(f"🔬 Gametocytes detected ({stage_counts['gametocyte']}) - transmission stage present")
+    if stage_counts['schizont'] > 0:
+        interpretation.append(f"🔬 Schizonts detected ({stage_counts['schizont']}) - mature stage present")
+    if stage_counts['ring'] > 0:
+        interpretation.append(f"🔬 Ring forms detected ({stage_counts['ring']}) - early stage infection")
+    if stage_counts['trophozoite'] > 0:
+        interpretation.append(f"🔬 Trophozoites detected ({stage_counts['trophozoite']}) - active feeding stage")
+
+    return severity, interpretation
+
+def create_confidence_histogram(class_confidences):
+    conf_data = []
+    for class_name, confs in class_confidences.items():
+        for conf in confs:
+            conf_data.append({'Class': class_name, 'Confidence': conf})
+
+    if not conf_data:
+        return None
+
+    df = pd.DataFrame(conf_data)
+    chart = alt.Chart(df).mark_bar(opacity=0.7).encode(
+        x=alt.X('Confidence:Q', bin=alt.Bin(maxbins=20), title='Confidence Score'),
+        y=alt.Y('count()', title='Number of Detections'),
+        color=alt.Color('Class:N', legend=alt.Legend(title="Class")),
+        tooltip=['Class:N', 'count()']
+    ).properties(
+        width='container',
+        height=300,
+        title='Detection Confidence Distribution'
+    )
+    return chart
+
+# --- Helper: load sample image bytes from local disk ---
+@st.cache_data(show_spinner=False)
+def load_local_image_bytes(filepath: str):
+    """Read image bytes from a local file path."""
+    try:
+        with open(filepath, "rb") as f:
+            return f.read()
+    except Exception:
+        return None
 
 # --- Main Interface ---
 st.header("🩸 Upload Blood Smear Images")
 
-# Example images section
-with st.expander("📸 Need test images? Download example blood smears", expanded=False):
-    st.info("""
-    For testing purposes, you can use:
-    - High-resolution microscopy images (recommended: 1280x1280 or higher)
-    - JPEG, PNG, or BMP formats
-    - Well-stained Giemsa or Field stain preparations
-    - Images with clear cell boundaries
-    """)
+# --- Sample Images Section ---
+with st.expander("📸 Need test images? View & download example blood smears", expanded=False):
+    st.markdown("#### 🖼️ Example Blood Smear Images (BBBC041 Dataset)")
+    st.caption(
+        "These sample microscopy images are from the publicly available BBBC041 dataset "
+        "(Broad Bioimage Benchmark Collection, licensed CC BY-NC-SA 3.0). "
+        "Download any image below and upload it above to test the detector."
+    )
+
+    SAMPLE_IMAGES = [
+        {
+            "label": "Sample 1",
+            "filepath": os.path.join(base_path, "sample_images", "sample_1.jpg"),
+            "description": "Blood smear – contains infected RBCs",
+            "filename": "sample_blood_smear_1.jpg",
+        },
+        {
+            "label": "Sample 2",
+            "filepath": os.path.join(base_path, "sample_images", "sample_2.jpg"),
+            "description": "Blood smear – multiple parasite stages visible",
+            "filename": "sample_blood_smear_2.jpg",
+        },
+    ]
+
+    sample_cols = st.columns(len(SAMPLE_IMAGES))
+    for col, sample in zip(sample_cols, SAMPLE_IMAGES):
+        with col:
+            img_bytes = load_local_image_bytes(sample["filepath"])
+            if img_bytes:
+                st.image(
+                    img_bytes,
+                    caption=f"{sample['label']} – {sample['description']}",
+                    use_container_width=True,
+                )
+                st.download_button(
+                    label=f"⬇️ Download {sample['label']}",
+                    data=img_bytes,
+                    file_name=sample["filename"],
+                    mime="image/jpeg",
+                    use_container_width=True,
+                    key=f"dl_sample_{sample['label']}",
+                )
+            else:
+                st.warning(f"Sample image not found: {sample['filepath']}")
+
+    st.markdown("---")
+    st.info(
+        "**Tips for best results:** Use high-resolution images (≥ 1280×1280 px) · "
+        "Accepted formats: JPEG, PNG, BMP · "
+        "Well-stained Giemsa preparations work best · "
+        "Ensure clear cell boundaries and good focus."
+    )
 
 uploaded_files = st.file_uploader(
-    "Choose one or more image files", 
-    type=['jpg','jpeg','png','bmp'], 
+    "Choose one or more image files",
+    type=['jpg','jpeg','png','bmp'],
     accept_multiple_files=True,
     help="Upload microscopy images of blood smears (1280x1280 recommended)"
 )
@@ -497,20 +518,18 @@ chart_mode = st.sidebar.radio(
 )
 show_confidence_dist = st.sidebar.checkbox("Show Confidence Distribution", value=True)
 
-# Reset button
 if st.sidebar.button("🔄 Reset All", help="Clear all results and start fresh"):
     st.rerun()
 
 if uploaded_files and session and class_names:
     st.subheader(f"📊 Processing {len(uploaded_files)} Image(s)...")
-    
+
     col1, col2 = st.columns([3, 1])
     with col1:
         run_button = st.button("▶️ Run Detection", type="primary", use_container_width=True)
     with col2:
-        # Displaying the optimized settings
-        st.info(f"⚙️ Conf: {confidence_threshold:.2f} | NMS: Optimized")
-    
+        st.info(f"⚙️ Conf: {confidence_threshold:.2f} | NMS: {nms_threshold:.2f}")
+
     if run_button:
         progress_bar = st.progress(0)
         status_text = st.empty()
@@ -521,49 +540,37 @@ if uploaded_files and session and class_names:
 
         for i, file in enumerate(uploaded_files):
             status_text.text(f"Processing image {i+1}/{total_images}: {file.name}...")
-            
-            # Start timer
+
             start_time = time.time()
-            
             image = Image.open(file)
-            # UPDATED: The process_image call no longer includes nms_threshold
             detected_img_cv, class_counts, class_confidences, dim_warning = process_image(
-                session, image, confidence_threshold, class_names,
-                show_boxes, show_labels, show_confidence, show_only_parasites, 
+                session, image, confidence_threshold, nms_threshold, class_names,
+                show_boxes, show_labels, show_confidence, show_only_parasites,
                 color_scheme, class_thresholds if use_class_thresholds else None
             )
             detected_img_rgb = cv2.cvtColor(detected_img_cv, cv2.COLOR_BGR2RGB)
-            
-            # End timer
             processing_time = time.time() - start_time
             total_processing_time += processing_time
-            
-            # Store annotated image for download
             all_annotated_images.append((file.name, detected_img_rgb))
-            
+
             col_img, col_data = st.columns([2,1])
-            
+
             with col_img:
                 st.image(detected_img_rgb, caption=f"Processed: {file.name}", use_container_width=True)
                 st.caption(f"⏱️ Processing time: {processing_time:.2f}s")
                 if dim_warning:
                     st.warning(dim_warning)
-            
+
             with col_data:
                 st.markdown(f"#### 🧪 Results for **{file.name}**")
-                
-                # Calculate metrics
+
                 parasite_stages = ['schizont','ring','gametocyte','trophozoite']
                 total_parasite_count = sum(class_counts.get(stage,0) for stage in parasite_stages)
-                total_cells = sum(class_counts.values())
-                # Use total_cells in the denominator to be inclusive of RBCs and Leukocytes, 
-                # as per the WHO guide in the expandable section.
-                parasitemia = (total_parasite_count/total_cells)*100 if total_cells>0 else 0.0
-                
-                # Diagnostic interpretation (Fixes NameError)
+                total_detections = sum(class_counts.values())
+                parasitemia = (total_parasite_count/total_detections)*100 if total_detections>0 else 0.0
+
                 severity, interpretation = get_diagnostic_interpretation(parasitemia, total_parasite_count, class_counts)
-                
-                # Key metrics with color coding
+
                 col1, col2 = st.columns(2)
                 with col1:
                     st.metric("Total Parasites", total_parasite_count)
@@ -574,10 +581,9 @@ if uploaded_files and session and class_names:
                         st.metric("Parasitemia", f"{parasitemia:.2f}%", delta="Negative", delta_color="off")
                     else:
                         st.metric("Parasitemia", f"{parasitemia:.2f}%")
-                
-                # Interpretation box
+
                 st.info("\n\n".join(interpretation))
-                
+
                 with st.expander("📋 Detailed Counts & Confidence", expanded=False):
                     st.markdown("##### Class-wise Detection")
                     for class_name in class_names:
@@ -590,15 +596,13 @@ if uploaded_files and session and class_names:
                             st.caption(f"Confidence - Avg: {avg_conf:.2f}, Min: {min_conf:.2f}, Max: {max_conf:.2f}")
                         else:
                             st.write(f"**{class_name.title()}**: 0 detections")
-                    
-                    st.metric("Total Detections", total_cells)
+                    st.metric("Total Detections", total_detections)
 
-                # Visualization
                 counts_df = pd.DataFrame(list(class_counts.items()), columns=["Class", "Count"])
                 if not counts_df.empty and counts_df["Count"].sum() > 0:
                     total = counts_df["Count"].sum()
                     counts_df["Percentage"] = (counts_df["Count"] / total) * 100
-                    
+
                     if chart_mode == 'Counts':
                         x_field, x_title = "Count", "Number of Detections"
                     else:
@@ -620,20 +624,18 @@ if uploaded_files and session and class_names:
                         .properties(width="container", height=300)
                     )
                     st.altair_chart(chart, use_container_width=True)
-                    
-                    # Confidence distribution (Fixes NameError)
+
                     if show_confidence_dist:
                         conf_chart = create_confidence_histogram(class_confidences)
                         if conf_chart:
                             st.altair_chart(conf_chart, use_container_width=True)
 
-                # Store for CSV
                 results_summary.append({
                     "Image": file.name,
                     "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     "Processing_Time_s": f"{processing_time:.2f}",
                     "Total Parasites": total_parasite_count,
-                    "Total Detections": total_cells,
+                    "Total Detections": total_detections,
                     "Parasitemia (%)": f"{parasitemia:.2f}",
                     "Severity": severity,
                     **{f"{cls}": class_counts.get(cls, 0) for cls in class_names}
@@ -646,11 +648,10 @@ if uploaded_files and session and class_names:
         status_text.empty()
         st.success(f"✅ Detection complete! Total processing time: {total_processing_time:.2f}s")
 
-        # Summary Statistics
         if len(results_summary) > 1:
             st.subheader("📊 Batch Summary Statistics")
             df_summary = pd.DataFrame(results_summary)
-            
+
             col1, col2, col3, col4 = st.columns(4)
             with col1:
                 avg_parasitemia = df_summary['Parasitemia (%)'].str.rstrip('%').astype(float).mean()
@@ -665,11 +666,9 @@ if uploaded_files and session and class_names:
                 avg_time = df_summary['Processing_Time_s'].astype(float).mean()
                 st.metric("Avg Time/Image", f"{avg_time:.2f}s")
 
-        # Download Options
         st.subheader("📥 Download Results")
         col1, col2, col3 = st.columns(3)
-        
-        # CSV Export
+
         with col1:
             if results_summary:
                 df_results = pd.DataFrame(results_summary)
@@ -683,20 +682,17 @@ if uploaded_files and session and class_names:
                     help="Export detailed results with timestamps",
                     use_container_width=True
                 )
-        
-        # Download Annotated Images
+
         with col2:
             if all_annotated_images:
-                # Create ZIP file with annotated images
                 zip_buffer = BytesIO()
                 with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
                     for img_name, img_array in all_annotated_images:
-                        # Convert numpy array to PIL Image
                         pil_img = Image.fromarray(img_array)
                         img_buffer = BytesIO()
                         pil_img.save(img_buffer, format='PNG')
                         zip_file.writestr(f"annotated_{img_name}", img_buffer.getvalue())
-                
+
                 st.download_button(
                     label="🖼️ Download Annotated Images",
                     data=zip_buffer.getvalue(),
@@ -705,8 +701,7 @@ if uploaded_files and session and class_names:
                     help="Download all processed images with bounding boxes",
                     use_container_width=True
                 )
-        
-        # PDF Report (placeholder - would need reportlab library)
+
         with col3:
             st.button(
                 "📑 Generate PDF Report",
@@ -720,8 +715,7 @@ elif not session:
     st.error("❌ ONNX model could not be loaded. Please check the path and file integrity.")
 else:
     st.info("👆 Upload one or more blood smear images to begin analysis")
-    
-    # Show some guidance when no images are uploaded
+
     col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown("### 📋 Preparation")
@@ -734,7 +728,6 @@ else:
         st.markdown("### ⚙️ Settings")
         st.write("""
         - Adjust confidence threshold
-        - **NMS is fixed and optimized for multi-class detection.**
         - Choose color scheme
         - Enable per-class thresholds
         """)
@@ -761,7 +754,7 @@ st.sidebar.info("""
 - mAP50-95: 0.301
 - F1-Score: 0.391
 
-**Version:** 2.0 (with Multi-Stage NMS)
+**Version:** 2.0
 
 **Note:** For research purposes only. Not for clinical diagnosis.
 """)
