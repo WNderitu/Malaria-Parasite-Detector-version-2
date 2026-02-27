@@ -9,7 +9,7 @@
 ![Classes](https://img.shields.io/badge/Classes-7-yellow?style=flat)
 ![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%203.0-lightgrey?style=flat)
 
-This repository is an update on a previous repository https://github.com/WNderitu/Malaria-parasite-P.Vivax-detector-and-counter.git. In this repository, 1031 images utilised in model training. 
+This repository is an update on a previous repository https://github.com/WNderitu/Malaria-parasite-P.Vivax-detector-and-counter.git. In this repository, 1031 images are utilised in model training. 
 
 ## Introduction
 
