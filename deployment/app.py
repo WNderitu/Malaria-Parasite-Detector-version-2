@@ -469,6 +469,11 @@ with st.expander("📸 Need test images? View & download example blood smears", 
             "description": "Blood smear – multiple parasite stages visible",
             "filename": "sample_blood_smear_2.jpg",
         },
+        {    "label": "Sample 3",
+            "filepath": os.path.join(base_path, "sample_images", "sample_3.jpg"),
+            "description": "Your description here",
+            "filename": "sample_blood_smear_3.jpg",    
+        },
     ]
 
     sample_cols = st.columns(len(SAMPLE_IMAGES))
