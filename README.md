@@ -1,6 +1,7 @@
 # Plasmodium Vivax (malaria) parasite detector and counter using YOLOv8n Model version 2
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue?style=flat&logo=python&logoColor=white)
+![Jupyter Notebook](https://img.shields.io/badge/Jupyter-Notebook-F37626?style=flat&logo=jupyter&logoColor=white)
 ![YOLOv8](https://img.shields.io/badge/YOLOv8-Nano-00BFFF?style=flat)
 ![Framework](https://img.shields.io/badge/Framework-Ultralytics-purple?style=flat)
 ![Streamlit](https://img.shields.io/badge/App-Streamlit-FF4B4B?style=flat&logo=streamlit&logoColor=white)
