@@ -1,14 +1,34 @@
 # Plasmodium Vivax (malaria) parasite detector and counter using YOLOv8n Model version 2
 
+PROJECT
+---
+![Version](https://img.shields.io/badge/version-2-blue)
+![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%203.0-lightgrey?style=flat)
+
+TECH STACK & FRAMEWORK
+---
+![Google_Colab](https://img.shields.io/badge/Platform-Google_Colab-ea580c)
+![Google_Drive](https://img.shields.io/badge/Storage-Google_Drive-ea580c)
 ![Python](https://img.shields.io/badge/Python-3.8+-blue?style=flat&logo=python&logoColor=white)
 ![Jupyter Notebook](https://img.shields.io/badge/Jupyter-Notebook-F37626?style=flat&logo=jupyter&logoColor=white)
-![YOLOv8](https://img.shields.io/badge/YOLOv8-Nano-00BFFF?style=flat)
+![Model](https://img.shields.io/badge/YOLOv8-Nano-00BFFF?style=flat)
 ![Framework](https://img.shields.io/badge/Framework-Ultralytics-purple?style=flat)
 ![Streamlit](https://img.shields.io/badge/App-Streamlit-FF4B4B?style=flat&logo=streamlit&logoColor=white)
-![Dataset](https://img.shields.io/badge/Dataset-BBBC041-orange?style=flat)
-![Images](https://img.shields.io/badge/Training%20Images-1031-green?style=flat)
-![Classes](https://img.shields.io/badge/Classes-7-yellow?style=flat)
-![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%203.0-lightgrey?style=flat)
+![YOLOv8n](https://img.shields.io/badge/Model-YOLOv8n-4338ca)
+![Ultralytics](https://img.shields.io/badge/Ultralytics-YOLOv8-4338ca)
+![ONNX](https://img.shields.io/badge/Export-ONNX-6b7280)
+![ONNX_Runtime](https://img.shields.io/badge/Runtime-ONNX_Runtime_CPU-6b7280)
+![PyTorch](https://img.shields.io/badge/Deep_Learning-PyTorch-ee4c2c)
+![OpenCV](https://img.shields.io/badge/Vision-OpenCV-16a34a)
+![NumPy](https://img.shields.io/badge/NumPy-1.x-013243)
+![Pandas](https://img.shields.io/badge/Pandas-Data_Analysis-150458)
+![Matplotlib](https://img.shields.io/badge/Matplotlib-Visualisation-0d9488)
+![Altair](https://img.shields.io/badge/Altair-Interactive_Charts-7c3aed)
+![Pillow](https://img.shields.io/badge/Pillow-Image_Processing-db2777)
+![PyYAML](https://img.shields.io/badge/PyYAML-Config-b45309)
+![imagehash](https://img.shields.io/badge/imagehash-Deduplication-6b7280)
+![ReportLab](https://img.shields.io/badge/ReportLab-PDF_Generation-dc2626)
+![BBBC041](https://img.shields.io/badge/Dataset-BBBC041_Broad_Institute-7c3aed)
 
 This repository is an update on a previous repository https://github.com/WNderitu/Malaria-parasite-P.Vivax-detector-and-counter.git. In this repository, 1031 images are utilised in model training. 
 
@@ -16,12 +36,7 @@ This repository is an update on a previous repository https://github.com/WNderit
 
 ### Malaria
 
-A life-threatening disease, caused by Plasmodium parasites transmitted by female Anopheles mosquitoes. Five types of plasmodium parasites cause malaria; _Plasmodium Vivax_ (focus of this project), _Plasmodium Falciparum_, _Plasmodium Ovale_, _Plasmodium Malariae_ and _Plasmodium Knowelsi_. Malaria parasites undergo different lifecycle stages namely: hypnozoite, merozoite, ring, trophozoite, schizont and gametocyte while in human blood and tissues. Four lifecycle stages may be detected in infected human red blood cells during a parasites life cycle in man. 
-
-### Malaria Disease Burden in 2024
-
-Globally, there were 282 million new cases(1 out of 16 people developed malaria) and 610,000 deaths (13.8 deaths per 100,000 people at risk).  In africa, There were 265 million new cases (94% of cases globally) which translates to 1 out of 4 people developed malaria (237.6 cases per 1,000 people at risk). In terms of deaths, Africa had 579,000 deaths (95% of deaths globally) which was also quantified as 51.9 deaths per 100,000 people at risk. 75% of all deaths in Africa occured in children less than 5 years of age. This statistics show that
-Africa had a heavy burden of malaria especially in Sub Saharan Africa.(Source: WHO Global Malaria Report, 2025)
+A life-threatening disease, caused by Plasmodium parasites transmitted by female Anopheles mosquitoes. Five types of plasmodium parasites cause malaria; _Plasmodium Vivax_ (focus of this project), _Plasmodium Falciparum_, _Plasmodium Ovale_, _Plasmodium Malariae_ and _Plasmodium Knowelsi_. Malaria parasites undergo different lifecycle stages namely: hypnozoite, merozoite, ring, trophozoite, schizont and gametocyte while in human blood and tissues. Four lifecycle stages may be detected in infected human red blood cells during a parasites life cycle in man.  Globally, there were 282 million new cases(1 out of 16 people developed malaria) and 610,000 deaths (13.8 deaths per 100,000 people at risk).  In africa, There were 265 million new cases (94% of cases globally) which translates to 1 out of 4 people developed malaria (237.6 cases per 1,000 people at risk). In terms of deaths, Africa had 579,000 deaths (95% of deaths globally) which was also quantified as 51.9 deaths per 100,000 people at risk. 75% of all deaths in Africa occured in children less than 5 years of age. This statistics show that Africa had a heavy burden of malaria especially in Sub Saharan Africa.(Source: WHO Global Malaria Report, 2025)
 
 ### Malaria Diagnosis and Need for Advanced Detection Systems
 
@@ -35,9 +50,7 @@ The detection of Plasmodium vivax malaria remains challenging, primarily due to 
 
 ## Proposed Solution
 
-A YOLOv8n model for detecting infected red blood cells and the parasite stage in the red blood cells and counting the number of parasite stages per image. This is a computer vison model. 
-
-A diagram illustrating the solution is shown.
+A You Only Look Once (YOLO) v8n model for detecting infected red blood cells and the parasite stage in the red blood cells and counting the number of parasite stages per image. This model leverages its advanced capabilities to accurately identify and localize multiple object types within images or video frames. A diagram illustrating the solution is shown. The model will be trained on images. 
 
 <img width="1381" height="677" alt="image" src="https://github.com/user-attachments/assets/3ff66565-0bcd-46ae-b2c5-a8db50e0a5c7" />
 
@@ -50,28 +63,29 @@ A diagram illustrating the solution is shown.
 5.	 To count the number of detected growth stages of the plasmodium vivax parasites per microscopic image using the developed YOLOv8 model
 
 ## Image Dataset
+![Dataset](https://img.shields.io/badge/Dataset-BBBC041-orange?style=flat)
+![Images](https://img.shields.io/badge/Total_Images-1%2C328-7c3aed)
+![Resolution](https://img.shields.io/badge/Resolution-1600_×_1200-7c3aed)
+![Format](https://img.shields.io/badge/Format-JPG_/_PNG-6b7280)
 
-Images obtained from Broad Bioimage Benchmark Collection website <https://bbbc.broadinstitute.org/BBBC041/>. The dataset consists of an image folder, training json file & test json file. There are 1,328 microscopic images of blood smears with a resolution of 600x1200. The blood smears contain red blood cells infected with _Plasmodium vivax_ parasite. For each image, a class label and set of bounding box coordinates are given. There are 7 Class labels: red blood cell (uninfected), trophozoite, gametocyte, schizont, difficult, ring & leukocyte (uninfected). The Red Blood Cell and Leukocyte classes are blood cells that are not infected with the malaria parasite. The Trophozoite, Schizont, Ring and Gametocyte are different growth stages of the malaria parasite. The difficult class label is for observed parasite growth stages that couldn't be grouped into either of the 4 growth classes. Sample images from the dataset are shown. 
+Microscopic images obtained from Broad Bioimage Benchmark Collection website <https://bbbc.broadinstitute.org/BBBC041/>. The dataset consists of an image folder, training json file & test json file. Sample images from the dataset are shown. 
 
 <img width="491" height="325" alt="image" src="https://github.com/user-attachments/assets/24c25e2a-f8b3-47c6-837b-bb9d800e3430" />
 
 <img width="447" height="319" alt="image" src="https://github.com/user-attachments/assets/dfdab58d-827d-496b-8da6-bcee41ffbd42" />
 
-## Project Description
-This project employs YOLOv8n variant for multiclass object detection, leveraging its advanced capabilities to accurately identify and localize multiple object types within images or video frames.
-
 ## Deep learning Model Architecture
+![Model](https://img.shields.io/badge/YOLOv8-Nano-00BFFF?style=flat)
+![Framework](https://img.shields.io/badge/Framework-Ultralytics-purple?style=flat)
 
-The You Only Look Once (YOLO) model is a single stage detector that predicts bounding boxes and class probabilities directly from the entire input image in a single forward pass, which makes the model faster than other object detection models. The model treats object detection as a single regression problem. 
-
-The YOLO version 8 model (YOLOv8) will be used for object detection and counting. The model size to be used is yolov8n (Nano) which has about 3 million parameters, is the fastest, suitable for small datasets and computers with limited GPU. However, it's accuracy is lower than other bigger sizes of YOLOv8 models. 
+The YOLO model is a single stage detector that predicts bounding boxes and class probabilities directly from the entire input image in a single forward pass, which makes the model faster than other object detection models. The model treats object detection as a single regression problem. YOLOv8 will be used for object detection and counting. The model size to be used is yolov8n (Nano) which has about 3 million parameters, is the fastest, suitable for small datasets and computers with limited GPU. However, it's accuracy is lower than other bigger sizes of YOLOv8 models. 
 
 The model is dividied into three main components:
 - **Backbone (feature extractor)** - this consists of the CNN that is responsible for extracting hierarchical features from the input image.
 - **Neck** - this merges/fuses feature maps from the different stages of the backbone to capture information at various scales.
 - **Head** - this is responsible for making predictions. It takes the merged features from the neck and outputs bounding box coordinates, class probabilities, and confidence scores for detected objects. The Head typically consists of multiple detection heads, each connected to a different output scale from the Neck, enabling the prediction of objects at various sizes. Post-processing techniques like non-maximum suppression (NMS) are applied to filter out redundant or overlapping bounding box predictions, resulting in the final set of detected objects.
 
-<img width="1207" height="1122" alt="image" src="https://github.com/user-attachments/assets/4665efe1-8dd4-4cbc-b2f1-d57c7475b34c" />
+<img width="805" height="749" alt="image" src="https://github.com/user-attachments/assets/285f3df0-be30-4a7f-8071-302d6f66cd20" />
 
 **Object detection evaluation metrics** used will be precision, recall, F1 Score and mean average precision (mAP).
   
@@ -98,125 +112,153 @@ Other metrics to help understand mAP@0.5 & mAP@0.5-0.95 performance metrics in Y
 
 ## Methodology
 
-### 1.0 Data Preparation (notebook:1_data_preparation.ipynb)
+### 1.0 Data Preparation
+![Notebook](https://img.shields.io/badge/Notebook-1_·_Data_Preparation-6b7280)
+![Libraries](https://img.shields.io/badge/Libraries-Pillow_·_NumPy_·_Pandas_·_Matplotlib_·_PyYAML_·_imagehash-0d9488)
+![Classes](https://img.shields.io/badge/Classes-7-db2777)
 
 #### 1.1 Checking for Data Imbalance
-
+The blood smears contain red blood cells infected with _Plasmodium vivax_ parasite. For each image, a class label and set of bounding box coordinates are given. There are 7 Class labels: red blood cell (uninfected), trophozoite, gametocyte, schizont, difficult, ring & leukocyte (uninfected). The Red Blood Cell and Leukocyte classes are blood cells that are not infected with the malaria parasite. The Trophozoite, Schizont, Ring and Gametocyte are different growth stages of the malaria parasite. The difficult class label is for observed parasite growth stages that couldn't be grouped into either of the 4 growth classes. 
 The number of images in training subset was 1208 & 120 images for the test subset. Class Imbalance noted in the train, val and test image subsets as shown in the charts below. The imbalance is severe with 96% of the objects being from the red blood cell class. This imbalance is inherent to human blood smears as they have more red blood cells than other cells found in blood.
 
-TRAINING set:
-difficult: 441 (0.55%)
-gametocyte: 144 (0.18%)
-leukocyte: 103 (0.13%)
-red blood cell: 77420 (96.64%)
-ring: 353 (0.44%)
-schizont: 179 (0.22%)
-trophozoite: 1473 (1.84%)
-
- TEST set:
-difficult: 5 (0.08%)
-gametocyte: 12 (0.20%)
-leukocyte: 0 (0.00%)
-red blood cell: 5614 (94.80%)
-ring: 169 (2.85%)
-schizont: 11 (0.19%)
-trophozoite: 111 (1.87%)
-
-<img width="887" height="590" alt="image" src="https://github.com/user-attachments/assets/404e5401-ec87-44b4-b29a-b254e9dcb110" /> 
+<img width="692" height="460" alt="image" src="https://github.com/user-attachments/assets/871445a8-f0d1-4e60-888f-abece37b9220" />
 
 #### 1.2 Handling Data Imbalance
+![Balancing](https://img.shields.io/badge/Class_Balancing-RBC--only_removed-16a34a)
 
 This involved selecting from the 1208 training images, images with only 'Red Blood Cell' annotations, removing them, inorder to reduce class imbalance. 177 images were removed and moved to a separate folder. 1031 images remained for use in model training. The corresponsing training JSON file was updated. 
 
-Resulting distribution was:
-TRAINING set (excluding red blood cell only images):
-difficult: 441 (0.64%)
-gametocyte: 144 (0.21%)
-leukocyte: 103 (0.15%)
-red blood cell: 65721 (96.06%)
-ring: 353 (0.52%)
-schizont: 179 (0.26%)
-trophozoite: 1473 (2.15%)
-
-TEST set:
-difficult: 5 (0.08%)
-gametocyte: 12 (0.20%)
-leukocyte: 0 (0.00%)
-red blood cell: 5614 (94.80%)
-ring: 169 (2.85%)
-schizont: 11 (0.19%)
-trophozoite: 111 (1.87%)
-
-<img width="986" height="690" alt="image" src="https://github.com/user-attachments/assets/9e291480-af8c-4e92-b0cd-528911fd6229" />
+<img width="700" height="490" alt="image" src="https://github.com/user-attachments/assets/406cee7b-f6f9-4d87-a92e-1634c82ba685" />
 
 #### 1.3 Dataset preparation for YOLOv8n model
-The following steps were done:
+ANNOTATIONS
+![Conversion](https://img.shields.io/badge/JSON_→_YOLO-Annotation_Conversion-16a34a)
+![Labels](https://img.shields.io/badge/Label_Format-YOLO_TXT-4338ca)
+![Config](https://img.shields.io/badge/Config-data.yaml-0d9488)
 
-i. Training and test JSON files were converted to YOLOv8 txt format.
+DATASPLIT
+![Train](https://img.shields.io/badge/Train-825_images-16a34a)
+![Validation](https://img.shields.io/badge/Validation-206_images-b45309)
+![Test](https://img.shields.io/badge/Test-120_images-2563eb)
+![Split](https://img.shields.io/badge/Split-Train_/_Val_/_Test-16a34a)
 
-ii. Creation of class weights
+Involved converting training and test JSON files to YOLOv8 txt format, creation of class weights, yolov8_malaria dataset folder with image & labels subfolders, test, training & val folders in images directory and val folder in labels directory. Some of the training images were moved to the val image and label subfolders from the training folders to have a val folder with 206 images. The resulting training set folders (image & labels folder) were updated to result in 825 images. Lastly a data configuration file appropriate for YOLOv8n model training was created.
+### Class weights
 
-iii. Creation of yolov8_malaria dataset folder with image & labels subfolders
+<img width="496" height="465" alt="image" src="https://github.com/user-attachments/assets/6288a34d-7372-4c68-83e9-5bf8dfeb31c6" />
 
-iv. Creation of test, training & val folders in images directory
+### Data configuration 
 
-v. Creation of val folder in labels directory
-
-vi. Moving of some training images to the val image and label subfolders from the training folders to have a val folder with 206 images. 
-
-vii. Updating of the resulting training set folders  (image & labels folder) to result in 825 images. 
-
-viii. Creation of a data configuration file appropriate for YOLOv8n model training.
-
-<img width="842" height="491" alt="Screenshot 2026-02-23 192115" src="https://github.com/user-attachments/assets/ae11f4c9-d8de-4e89-ae5c-21d7424b75a9" />
+<img width="658" height="226" alt="image" src="https://github.com/user-attachments/assets/a72cdf43-12c5-4891-8235-8d71b41cb6aa" />
 
 ### 2.0 Model Training & Evaluation - Train 1
+![Notebook](https://img.shields.io/badge/Notebook-2_·_Model_Training-6b7280)
+![Device](https://img.shields.io/badge/Device-GPU_CUDA-76b900)
+![Optimizer](https://img.shields.io/badge/Optimizer-SGD_with_Cosine_LR-ea580c)
+![LR](https://img.shields.io/badge/Learning_Rate-0.001_→_0.0001-b45309)
+![Epochs](https://img.shields.io/badge/Epochs-500-orange?style=flat-square)
+![Patience](https://img.shields.io/badge/Early_Stopping-Patience_50-6b7280)
+![Class_Weights](https://img.shields.io/badge/Class_Weights-Custom_7_classes-7c3aed)
 
-The prepared dataset was used for training the YOLOv8n model (see notebook:2_model_train.ipynb). Image size used for training was 1280 with a batch size of 8, 500 epochs with early stop at 300 and a learning rate of 0.001. Augmentations for microscopy were implemented such as small object augmentations, colour augmentations and geometric augmentations. Class weights were also applied. Class loss and box loss was also implemented. This first training was interrupted 3 times due to GPU timeout, adding of aggressive learning rate decay andmno improvement to finally end training at epoch 354/500. 
+![mAP50](https://img.shields.io/badge/mAP50-0.743-16a34a)
+![mAP50_95](https://img.shields.io/badge/mAP50--95-0.581-16a34a)
+![Precision](https://img.shields.io/badge/Precision-0.665-0d9488)
+![Recall](https://img.shields.io/badge/Recall-0.740-0d9488)
 
-<img width="678" height="393" alt="image" src="https://github.com/user-attachments/assets/fac14782-cd50-4ac0-aa5b-21dfff5299aa" />
+The prepared dataset was used for training the YOLOv8n model. Number of epochs was 500, with image size of 1280 and a batch size of 8. Augmentations for microscopy were implemented such as small object augmentations, colour augmentations and geometric augmentations. Class loss and box loss was also implemented. This first training was interrupted 3 times due to GPU timeout, adding of aggressive learning rate decay and no improvement to finally end training at epoch 354/500. 
 
-<img width="700" height="393" alt="image" src="https://github.com/user-attachments/assets/8e5e7789-6e87-4aa3-b351-a6ad6e2ec26b" />
+<img width="643" height="373" alt="image" src="https://github.com/user-attachments/assets/cdc872a5-9df9-4f4a-837b-ce79b986c570" />
 
-<img width="678" height="393" alt="image" src="https://github.com/user-attachments/assets/4302d664-ec98-48ca-b32f-58d5b2977079" />
+<img width="633" height="355" alt="image" src="https://github.com/user-attachments/assets/0e114ffa-e686-4836-8cce-820f1b3119a0" />
 
-<img width="678" height="393" alt="image" src="https://github.com/user-attachments/assets/0a8d364d-e153-435c-90e8-4ad8eb4a9a57" />
+<img width="624" height="362" alt="image" src="https://github.com/user-attachments/assets/a48b99db-fe11-4c93-b369-4d869745870c" />
 
-<img width="691" height="393" alt="image" src="https://github.com/user-attachments/assets/04dcd04e-9949-456c-b5d6-e4a3aa076ae3" />
+<img width="616" height="350" alt="image" src="https://github.com/user-attachments/assets/db917443-ac03-4dc6-9b14-dd6d3addec7f" />
 
-<img width="691" height="393" alt="image" src="https://github.com/user-attachments/assets/76eef77c-ae7d-43de-9700-80d5ba048da0" />
+<img width="623" height="354" alt="image" src="https://github.com/user-attachments/assets/2272bd84-3cf6-42eb-bac6-4e2a534e4758" />
 
+Performance metrics
 
-<img width="1254" height="301" alt="image" src="https://github.com/user-attachments/assets/2a316fb6-92d9-41bd-8bfc-446c8ef9fffa" />
+<img width="739" height="177" alt="image" src="https://github.com/user-attachments/assets/2a84c075-c63d-4799-8b56-e9bd0021ce6b" />
 
-Based on the resulting metrics for precision, recall, mAP50, mAP50-95 and per class metrics, fine tuning of the model was planned. Before fine tuning could be done, the dataset was further processed to try and improve the metrics (see notebook: 3_data_preparation_for_finetune.ipynb). This involved removing the difficult class entirely as it was confusing the model and merging with the trophozoite class. 
+### 3.0 Data Preparation for fine tuning 
+![Notebook](https://img.shields.io/badge/Notebook-3_·_Data_Prep_for_Finetune-6b7280)
+![Action](https://img.shields.io/badge/Action-Difficult_→_Trophozoite_Merge-dc2626)
+![Analysis](https://img.shields.io/badge/Analysis-Co--occurrence_%26_BBox_Dimensions-7c3aed)
+![Difficult_Train](https://img.shields.io/badge/Difficult_Class_(Train)-2.45%25_of_annotations-b45309)
+![Difficult_Val](https://img.shields.io/badge/Difficult_Class_(Val)-0.68%25_of_annotations-b45309)
+![Overlap](https://img.shields.io/badge/Trophozoite_Overlap-133_of_270_images-ea580c)
+![Classes](https://img.shields.io/badge/Classes_After_Merge-6_(from_7)-16a34a)
+![Output](https://img.shields.io/badge/Output-yolov8_malaria_finetune_dataset-2563eb)
 
-### 3.0 Hyperparameter tuning (notebook: 4_hyperparametertune.ipynb)
-Hyperparameter tuning was done twice (Fine Tune 1 & Fine Tune 2). Based on the resulting metrics, fine tune 1 model was chosen for evaluation on 120 test images and deployment. The model had significantly better Recall (fewer missed detections) for common (Trophozoite) and rare (Gametocyte) classes, the accuracy was marginally higher and performed best on detecting the different parasite classes. The metrics are shown. 
+Based on the resulting metrics for precision, recall, mAP50, mAP50-95 and per class metrics, fine tuning of the model was planned. Before fine tuning could be done, the dataset was further processed to try and improve the metrics. This involved removing the difficult class entirely as it was confusing the model and merging with the trophozoite class. 
 
-<img width="1632" height="403" alt="image" src="https://github.com/user-attachments/assets/6add65e4-9c36-42b8-9361-470ce457bc1b" />
+### 4.0 Hyperparameter tuning (notebook: 4_hyperparametertune.ipynb)
+![Notebook](https://img.shields.io/badge/Notebook-4_·_Hyperparameter_Tuning-6b7280)
+![Strategy](https://img.shields.io/badge/Strategy-Fine--tune_from_best.pt-4338ca)
+![Augmentation](https://img.shields.io/badge/Augmentation-Extended_Mosaic-0d9488)
+![Scale](https://img.shields.io/badge/Scale_Augmentation-0.7_(from_0.5)-0d9488)
+![Epochs](https://img.shields.io/badge/Epochs-200_max-6b7280)
+![LR](https://img.shields.io/badge/LR-Aggressive_Decay_Cosine-b45309)
 
-<img width="691" height="393" alt="image" src="https://github.com/user-attachments/assets/2df855fe-2a3f-43d6-be97-ed593c3e7306" />
+![mAP50_v1](https://img.shields.io/badge/Finetune_v1_mAP50-0.798-16a34a)
+![mAP50_95_v1](https://img.shields.io/badge/Finetune_v1_mAP50--95-0.624-16a34a)
+![Precision_v1](https://img.shields.io/badge/Avg_Precision-0.756-0d9488)
+![Recall_v1](https://img.shields.io/badge/Avg_Recall-0.759-0d9488)
+![Best_Epoch](https://img.shields.io/badge/Best_Epoch-131_(mAP50_0.804)-db2777)
 
-<img width="691" height="393" alt="image" src="https://github.com/user-attachments/assets/ae5b6239-3a3b-40e2-ae6b-7494ef9adb9a" />
+Hyperparameter tuning was done twice (Fine Tune 1 & Fine Tune 2). Based on the resulting metrics, the best.pt was chosen from fine tune 1 model for evaluation on 120 test images and deployment. The model had significantly better Recall (fewer missed detections) for common (Trophozoite) and rare (Gametocyte) classes, the accuracy was marginally higher and performed best on detecting the different parasite classes. 
 
-<img width="691" height="393" alt="image" src="https://github.com/user-attachments/assets/998861f9-e4d1-44ff-910e-2fd7766dcf5d" />
+<img width="2202" height="470" alt="image" src="https://github.com/user-attachments/assets/936e259c-85c3-46a3-be3f-0329fca0f150" />
 
-<img width="699" height="393" alt="image" src="https://github.com/user-attachments/assets/b643cc9a-098f-477e-accf-cd0c867b3485" />
+### Curves
+<img width="575" height="327" alt="image" src="https://github.com/user-attachments/assets/b4bb803b-b800-4fd4-9993-112b4a6211db" />
 
-<img width="846" height="547" alt="image" src="https://github.com/user-attachments/assets/27de94b9-6f1b-4080-a26b-423f81a33625" />
+<img width="525" height="299" alt="image" src="https://github.com/user-attachments/assets/5f100a5b-38bc-47f8-9628-f5ab9901dd99" />
 
-### 4.0 Model Evaluation on Test Images (notebook: 5_model_eval_test.ipynb
+<img width="606" height="345" alt="image" src="https://github.com/user-attachments/assets/7a02ddc1-98bc-4e34-959a-a71554b5226d" />
 
-Model evaluation parameters used include: image size of 1280, confidenece threshold of 0.001 and iou of 0.7. Model did not perform as expected due to the inherently imbalanced microscopic image dataset. A microscopic image of a blood smear will always have red blood cells in abundance which makes the model have few examples of parasite classes to learn effectively from.  
+<img width="527" height="297" alt="image" src="https://github.com/user-attachments/assets/74a42669-8a28-4994-89b7-b307cd19fa2f" />
+
+<img width="520" height="336" alt="image" src="https://github.com/user-attachments/assets/902916b6-20de-4200-a796-4656b898a987" />
+
+<img width="577" height="411" alt="image" src="https://github.com/user-attachments/assets/61b2e700-27cf-4859-b9e3-655eb378fc89" />
+
+### 4.0 Model Evaluation on Test Images
+![Notebook](https://img.shields.io/badge/Notebook-5_·_Model_Evaluation-6b7280)
+![Weights](https://img.shields.io/badge/Weights-best.pt_(Finetune_v1)-4338ca)
+![Test_Images](https://img.shields.io/badge/Test_Images-120-7c3aed)
+![Conf](https://img.shields.io/badge/Confidence_Threshold-0.05-ea580c)
+![IoU](https://img.shields.io/badge/IoU_NMS-0.45-ea580c)
+![Classes](https://img.shields.io/badge/Classes-6_(RBC·Leukocyte·Schizont·Ring·Trophozoite·Gametocyte)-db2777)
+![Export](https://img.shields.io/badge/Export-ONNX-2563eb)
+![mAP50](https://img.shields.io/badge/mAP50-0.400-b45309)
+![mAP50_95](https://img.shields.io/badge/mAP50--95-0.301-b45309)
+![F1](https://img.shields.io/badge/F1--Score-0.391-b45309)
+![RBC_Precision](https://img.shields.io/badge/RBC_Precision-90.0%25-16a34a)
+![RBC_Recall](https://img.shields.io/badge/RBC_Recall-95.2%25-16a34a)
+![Trophozoite_Precision](https://img.shields.io/badge/Trophozoite_Precision-57.0%25-0d9488)
+![Ring_Precision](https://img.shields.io/badge/Ring_Precision-46.0%25-ea580c)
+![Schizont_Precision](https://img.shields.io/badge/Schizont_Precision-18.1%25-dc2626)
+
+Model did not perform as expected due to the inherently imbalanced microscopic image dataset. A microscopic image of a blood smear will always have red blood cells in abundance which makes the model have few examples of parasite classes to learn effectively from.  
 
 <img width="1660" height="451" alt="image" src="https://github.com/user-attachments/assets/cb4a8535-1591-4825-8e27-d6487e1d690f" />
 
 Overall, the model had poor performance in detecting all classes. In regard to per class performance, the model had good performance in detecting red blood cell class and was heavily biased on detecting classes as being red blood cells. Poor performance was noted in detecting the 3 rare classes; schizont, ring and gametocyte classes. Moderate performance was noted in detecting the trophozoite class. 
 
 ### 5.0 Deployment
+![App](https://img.shields.io/badge/App-Malaria_Parasite_Detector_v2-dc2626)
+![Framework](https://img.shields.io/badge/Framework-Streamlit-ff4b4b)
+![Model](https://img.shields.io/badge/Model-YOLOv8n_ONNX-4338ca)
+![Runtime](https://img.shields.io/badge/Runtime-ONNX_Runtime_CPU-6b7280)
+![Version](https://img.shields.io/badge/Version-2.0-16a34a)
+![Input](https://img.shields.io/badge/Input_Resolution-1280_×_1280-7c3aed)
+![Parasitemia](https://img.shields.io/badge/Parasitemia-WHO_Classification-2563eb)
+![Export](https://img.shields.io/badge/Export-CSV_·_PDF_·_ZIP_Images-0d9488)
+![Use_Case](https://img.shields.io/badge/Use_Case-Research_Only_(Not_Clinical)-6b7280)
 
-The selected model was deployed on streamlit app (app (1).py). The app can be accessed at https://malaria-parasite-detector-version-2-kuhwhgejcrbgyxsma4pzrp.streamlit.app/
+The selected model was deployed on streamlit app. The app can be accessed at https://malaria-parasite-detector-version-2-kuhwhgejcrbgyxsma4pzrp.streamlit.app/
 
 ## Recommendations/Future work
 
