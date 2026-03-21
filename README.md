@@ -38,6 +38,10 @@ This repository is an update on a previous repository https://github.com/WNderit
 
 A life-threatening disease, caused by Plasmodium parasites transmitted by female Anopheles mosquitoes. 5 types of parasites infect man, the parasite of focus will be _Plasmodium Vivax_. This malaria parasites undergoes different lifecycle stages namely: hypnozoite, merozoite, ring, trophozoite, schizont and gametocyte while in human blood and tissues. The four lifecycle stages may be detected in infected human red blood cells during a parasites life cycle in man.
 
+<img width="642" height="651" alt="image" src="https://github.com/user-attachments/assets/215cb3b2-1761-4457-907c-7a4d75a74c2c" />
+
+Image source: The malaria images for the four life-cycle stages of P. vivax. from https://www.researchgate.net/figure/The-malaria-images-for-the-four-life-cycle-stages-of-P-vivax-16_fig1_232321364
+
 ### Malaria Diagnosis and Need for Advanced Detection Systems
 
 The gold standard test for the diagnosis of malaria is microscopy. The test involves examining and detecting malaria parasite in a patient's blood sample. The microscopist identifies the type of parasite, the different lifecycle stages and the parasite quantity/load. In the laboratory, a Giemsa-stained thick blood smear is prepared from the patient's blood sample by a microscopist. This process is normally manual, time consuming and requires a skilled and expert microscopist. In some settings there is a shortage of laboratory personell with the required skills. In addititon, ensuring expert slide preparation and reading can be difficult and in some rural settings, microscopy is often unavailable. 
@@ -270,7 +274,8 @@ The selected model was deployed on streamlit app. The app can be accessed at htt
 
 ## Acknowledgements & Attributions
 1. We used image set BBBC041v1, available from the Broad Bioimage Benchmark Collection (Ljosa et al., Nature Methods, 2012)
-2. Image of YOLOv8 model architecture from: https://abintimilsina.medium.com/yolov8-architecture-explained-a5e90a560ce5
+2. The malaria images for the four life-cycle stages of P. vivax from Modified Global and Modified Linear Contrast Stretching Algorithms: New Colour Contrast Enhancement Techniques for Microscopic Analysis of Malaria Slide Images - Scientific Figure on ResearchGate. Available from: https://www.researchgate.net/figure/The-malaria-images-for-the-four-life-cycle-stages-of-P-vivax-16_fig1_232321364 [accessed 21 Mar 2026]
+3. Image of YOLOv8 model architecture from: https://abintimilsina.medium.com/yolov8-architecture-explained-a5e90a560ce5
 
 ## References
 1. https://www.who.int/health-topics/malaria#tab=tab_1
